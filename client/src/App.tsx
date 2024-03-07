@@ -6,10 +6,12 @@ import { Link, Routes, Route } from 'react-router-dom'
 import Input from './pages/Input'
 import Input2 from './pages/Input2'
 import List from './pages/List'
+import MainNavbar from './components/MainNavbar'
 
 function App() {
   return (
     <div className='App'>
+      <MainNavbar />
       <nav>
         <Link to={'/'}> Home</Link>
         <Link to={'/about'}> About</Link>
