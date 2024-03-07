@@ -27,7 +27,7 @@ const MainNavbar = () => {
               <NavDropdown.Item href='/travelbydate'>
                 여행 달력
               </NavDropdown.Item>
-              <NavDropdown.Item href='/festival'>축제2</NavDropdown.Item>
+              <NavDropdown.Item href='/festival'>축제</NavDropdown.Item>
               <NavDropdown.Item href='/show'>공연 /행사</NavDropdown.Item>
               <NavDropdown.Item href='/touristspot'>관광지</NavDropdown.Item>
               {/* <NavDropdown.Divider />
