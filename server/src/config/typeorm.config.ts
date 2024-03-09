@@ -26,6 +26,7 @@ export const typeORMConfig = (
     database: configService.get('DB_DATABASE'),
     entities: [__dirname + '/../**/*.entity.{js,ts}'],
     synchronize: true,
+    timezone: '+09:00',
   };
   return options;
 };
