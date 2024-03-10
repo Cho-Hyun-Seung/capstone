@@ -18,4 +18,12 @@ export class FestivalController {
   ): Promise<Festival[]> {
     return this.festivalService.getFestivalByDate(startDate, endDate);
   }
+
+  @Get('/festivalbyrange')
+  GetFestivalByRange(
+    @Body('pageNum') pageNum: number,
+    @Body('pageSize') pageSize: number,
+  ): Promise<Festival[]> {
+    return this.festivalService.getFestivalByRange(pageNum, pageSize);
+  }
 }

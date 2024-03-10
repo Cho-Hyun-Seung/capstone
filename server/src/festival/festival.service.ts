@@ -17,4 +17,11 @@ export class FestivalService {
   async getFestivalByDate(startDate: Date, endDate: Date): Promise<Festival[]> {
     return await this.festivalRepository.getFestivalByDate(startDate, endDate);
   }
+
+  async getFestivalByRange(
+    pageNum: number,
+    pageSize: number,
+  ): Promise<Festival[]> {
+    return await this.festivalRepository.getFestivalByRange(pageNum, pageSize);
+  }
 }
