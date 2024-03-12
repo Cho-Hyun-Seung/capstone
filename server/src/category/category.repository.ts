@@ -23,7 +23,7 @@ export class CategoryRepository extends Repository<Category> {
     return category;
   }
 
-  async insertCategory() {
+  async createCategoryByFile() {
     const categoryArr: CreateCategoryDto[] = categories;
     for (let category of categoryArr) {
       const resultCategory = new Category();
@@ -52,7 +52,36 @@ export class CategoryRepository extends Repository<Category> {
     }
   }
 
-  async getRootCategory() {
+  async getCategoryByCode(code: string): Promise<Category> {
+    return await this.findOne({
+      where: {
+        category_code: code,
+      },
+    });
+  }
+
+  async getRootCategory(): Promise<Category[]> {
     return await this.dataSouce.manager.getTreeRepository(Category).findRoots();
+  }
+
+  async getDepth2Category(): Promise<Category[]> {
+    return await this.dataSouce.manager
+      .getTreeRepository(Category)
+      .findTrees({ depth: 2 });
+  }
+
+  async getDescendantsCategory(parentCode: string): Promise<Category[]> {
+    const parentCategory = await this.getCategoryByCode(parentCode);
+    const descendatsCategory = await this.dataSouce.manager
+      .getTreeRepository(Category)
+      .findDescendants(parentCategory);
+
+    // 자손 카테고리 배열에서 루트 카테고리의 인덱스 값
+    const index = descendatsCategory.findIndex(
+      (category) => category.category_code === parentCategory.category_code,
+    );
+    // 부모 카테고리를 제거하고 리턴함
+    descendatsCategory.splice(index, 1);
+    return descendatsCategory;
   }
 }

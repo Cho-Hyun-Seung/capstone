@@ -1,4 +1,4 @@
-import { Body, Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Param } from '@nestjs/common';
 import { FestivalService } from './festival.service';
 import { Festival } from './festival.entity';
 
@@ -6,23 +6,23 @@ import { Festival } from './festival.entity';
 export class FestivalController {
   constructor(private festivalService: FestivalService) {}
 
-  @Get('/allfestival')
+  @Get('/all')
   getAllFestival(): Promise<Festival[]> {
     return this.festivalService.getAllFestival();
   }
 
-  @Get('/festivalbydate')
+  @Get('/getbydate/:startDate/:endDate')
   GetFestivalByDate(
-    @Body('startDate') startDate: Date,
-    @Body('endDate') endDate: Date,
+    @Param('startDate') startDate: Date,
+    @Param('endDate') endDate: Date,
   ): Promise<Festival[]> {
     return this.festivalService.getFestivalByDate(startDate, endDate);
   }
 
-  @Get('/festivalbyrange')
+  @Get('/getbyrange/:pagenum/:pagesize')
   GetFestivalByRange(
-    @Body('pageNum') pageNum: number,
-    @Body('pageSize') pageSize: number,
+    @Param('pagenum') pageNum: number,
+    @Param('pagesize') pageSize: number,
   ): Promise<Festival[]> {
     return this.festivalService.getFestivalByRange(pageNum, pageSize);
   }
