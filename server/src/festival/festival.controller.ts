@@ -1,6 +1,16 @@
-import { Body, Controller, Get, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { FestivalService } from './festival.service';
 import { Festival } from './festival.entity';
+import { getFestivalDto } from './dto/festival..dto';
 
 @Controller('festival')
 export class FestivalController {
@@ -19,11 +29,18 @@ export class FestivalController {
     return this.festivalService.getFestivalByDate(startDate, endDate);
   }
 
-  @Get('/getbyrange/:pagenum/:pagesize')
+  // transformOption에서 설정한 옵션: 암묵적 타입변환을 허용함!!
+  @Get('/getbyrange')
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  )
   GetFestivalByRange(
-    @Param('pagenum') pageNum: number,
-    @Param('pagesize') pageSize: number,
+    @Query() getFestivalDto: getFestivalDto,
   ): Promise<Festival[]> {
-    return this.festivalService.getFestivalByRange(pageNum, pageSize);
+    console.log(getFestivalDto);
+    return this.festivalService.getFestivalByRange(getFestivalDto);
   }
 }

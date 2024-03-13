@@ -4,6 +4,7 @@ import { FestivalRepository } from './festival.repository';
 import { Festival } from './festival.entity';
 import { CategoryRepository } from 'src/category/category.repository';
 import { Category } from 'src/category/category.entity';
+import { getFestivalDto } from './dto/festival..dto';
 
 @Injectable()
 export class FestivalService {
@@ -22,14 +23,12 @@ export class FestivalService {
   }
 
   async getFestivalByRange(
-    pageNum: number,
-    pageSize: number,
+    getFestivalDto: getFestivalDto,
   ): Promise<Festival[]> {
     const festivalCategory: Category[] =
       await this.cateogryResository.getDescendantsCategory('A0207');
     return await this.festivalRepository.getFestivalByRange(
-      pageNum,
-      pageSize,
+      getFestivalDto,
       festivalCategory,
     );
   }

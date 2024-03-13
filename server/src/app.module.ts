@@ -5,6 +5,7 @@ import { typeORMConfig } from './config/typeorm.config';
 import { CategoryModule } from './category/category.module';
 import { Category } from './category/category.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RegionModule } from './region/region.module';
 @Module({
   imports: [
     FestivalModule,
@@ -15,6 +16,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
     TypeOrmModule.forFeature([Category]),
     CategoryModule,
+    RegionModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,

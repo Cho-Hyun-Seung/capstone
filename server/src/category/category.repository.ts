@@ -6,8 +6,8 @@ import { categories } from './category.list';
 
 @Injectable()
 export class CategoryRepository extends Repository<Category> {
-  constructor(private dataSouce: DataSource) {
-    super(Category, dataSouce.createEntityManager());
+  constructor(private dataSource: DataSource) {
+    super(Category, dataSource.createEntityManager());
   }
 
   async createCategory(
@@ -48,7 +48,7 @@ export class CategoryRepository extends Repository<Category> {
       }
       console.log(resultCategory);
 
-      await this.dataSouce.manager.save(resultCategory);
+      await this.dataSource.manager.save(resultCategory);
     }
   }
 
@@ -61,18 +61,20 @@ export class CategoryRepository extends Repository<Category> {
   }
 
   async getRootCategory(): Promise<Category[]> {
-    return await this.dataSouce.manager.getTreeRepository(Category).findRoots();
+    return await this.dataSource.manager
+      .getTreeRepository(Category)
+      .findRoots();
   }
 
   async getDepth2Category(): Promise<Category[]> {
-    return await this.dataSouce.manager
+    return await this.dataSource.manager
       .getTreeRepository(Category)
       .findTrees({ depth: 2 });
   }
 
   async getDescendantsCategory(parentCode: string): Promise<Category[]> {
     const parentCategory = await this.getCategoryByCode(parentCode);
-    const descendatsCategory = await this.dataSouce.manager
+    const descendatsCategory = await this.dataSource.manager
       .getTreeRepository(Category)
       .findDescendants(parentCategory);
 

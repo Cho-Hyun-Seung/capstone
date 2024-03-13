@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Festival } from './festival.entity';
-import { DataSource, In, LessThan, MoreThan, Repository } from 'typeorm';
+import { DataSource, In, LessThan, Like, MoreThan, Repository } from 'typeorm';
 import { Category } from 'src/category/category.entity';
+import { getFestivalDto } from './dto/festival..dto';
 
 @Injectable()
 export class FestivalRepository extends Repository<Festival> {
@@ -41,10 +42,10 @@ export class FestivalRepository extends Repository<Festival> {
   // 페이지 번호로 축제 정보를 가져오는 API
   // 오늘 날짜와 가장 가까운 축제 정보를 우선으로 가져옴
   async getFestivalByRange(
-    pageNum: number,
-    pageSize: number,
+    getFestivalDto: getFestivalDto,
     festivalCategory: Category[],
   ): Promise<Festival[]> {
+    const { pageNum, pageSize, region } = getFestivalDto;
     // 오늘 날짜를 계산함
     const date = new Date();
     const year = date.getFullYear();
@@ -59,19 +60,17 @@ export class FestivalRepository extends Repository<Festival> {
     const festivalCategoryCodes: string[] = festivalCategory.map(
       (v) => v.category_code,
     );
-    console.log((pageNum - 1) * pageSize);
     const festivals: Festival[] = await this.createQueryBuilder()
-      // .select(['title', 'event_start_date', 'event_end_date', 'address1'])
       .where({
         event_end_date: MoreThan(today),
         category: In([...festivalCategoryCodes]),
+        address1: Like(`%${region}%`),
       })
       .orderBy({ 'festival.event_start_date': 'ASC' })
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
       .getMany();
 
-    console.log(today, festivals, festivals.length);
     if (festivals.length === 0) {
       throw new NotFoundException(`더이상 축제 정보가 존재하지 않습니다.`);
     }
