@@ -9,7 +9,10 @@ import {
 
 @Entity()
 export class Region {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
   region: string;
 
   @ManyToOne((type) => Region, (region) => region.children)

@@ -1,0 +1,10 @@
+.list-group-item:hover {
+  background-color: #dedede;
+  color: #000000; /* 텍스트 색상을 밝게 하여 읽기 쉽게 함 */
+  cursor: pointer; /* 호버 효과 시 커서를 포인터로 변경 */
+}
+
+.list-group-item.active {
+  background-color: #007bff;
+  color: #fff;
+}

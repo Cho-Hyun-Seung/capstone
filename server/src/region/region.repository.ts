@@ -30,17 +30,27 @@ export class RegionRepository extends Repository<Region> {
   }
 
   async createByFile() {
-    const doInfo = new Region();
-    const sigunguInfo = new Region();
     for (let region of regions) {
       const doData = Object.keys(region)[0];
-      doInfo.region = doData;
-      await this.save(doInfo);
+      let doInfo = await this.findOneBy({ region: doData });
+      if (!doInfo) {
+        doInfo = this.create({ region: doData });
+        await this.save(doInfo);
+      }
+
       for (let sigungu of region[doData]) {
-        sigunguInfo.region = sigungu;
-        sigunguInfo.parent = doInfo;
-        console.log(sigunguInfo);
-        await this.save(sigunguInfo);
+        // 이미 존재하는 경우 skip
+        const existRegion = await this.findOne({
+          where: { region: sigungu, parent: doInfo },
+        });
+
+        if (!existRegion) {
+          const sigunguInfo = this.create({
+            region: sigungu,
+            parent: doInfo,
+          });
+          await this.save(sigunguInfo);
+        }
       }
     }
   }
