@@ -36,7 +36,7 @@ const MainNavbar = () => {
               </NavDropdown.Item> */}
             </NavDropdown>
             <Nav.Link href='/planner'>여행 플래너</Nav.Link>
-            <Nav.Link href='/review'>후기</Nav.Link>
+            {/* <Nav.Link href='/review'>후기</Nav.Link> */}
             <Nav.Link href='/login'>로그인</Nav.Link>
           </Nav>
         </Container>
