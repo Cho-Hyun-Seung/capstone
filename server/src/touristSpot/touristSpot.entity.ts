@@ -11,7 +11,6 @@ import {
 } from 'typeorm';
 
 @Entity()
-@Tree('closure-table')
 export class Tourist_Spot extends BaseEntity {
   @PrimaryGeneratedColumn()
   tourist_spot_id: number;
@@ -29,7 +28,7 @@ export class Tourist_Spot extends BaseEntity {
   @Column({
     nullable: false,
   })
-  contend_id: number;
+  content_id: number;
 
   @Column({
     nullable: false,

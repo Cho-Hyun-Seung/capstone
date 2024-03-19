@@ -6,9 +6,11 @@ import { CategoryModule } from './category/category.module';
 import { Category } from './category/category.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RegionModule } from './region/region.module';
+import { TouristSpotModule } from './touristSpot/touristSpot.module';
 @Module({
   imports: [
     FestivalModule,
+    TouristSpotModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: typeORMConfig,
