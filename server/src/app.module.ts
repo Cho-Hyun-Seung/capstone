@@ -7,18 +7,20 @@ import { Category } from './category/category.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RegionModule } from './region/region.module';
 import { TouristSpotModule } from './touristSpot/touristSpot.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     FestivalModule,
     TouristSpotModule,
+    AuthModule,
+    CategoryModule,
+    RegionModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: typeORMConfig,
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([Category]),
-    CategoryModule,
-    RegionModule,
+    // TypeOrmModule.forFeature([Category]),
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,

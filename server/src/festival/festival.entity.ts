@@ -89,7 +89,7 @@ export class Festival extends BaseEntity {
   age_limit: string;
 
   @Column()
-  category: string;
+  category_code: string;
 
   @Column('text', {
     nullable: true,
