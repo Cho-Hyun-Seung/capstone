@@ -1,8 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Festival } from './festival.entity';
-import { DataSource, In, LessThan, Like, MoreThan, Repository } from 'typeorm';
+import {
+  DataSource,
+  In,
+  IsNull,
+  LessThan,
+  Like,
+  MoreThan,
+  Not,
+  Repository,
+} from 'typeorm';
 import { Category } from 'src/category/category.entity';
-import { getFestivalDto } from './dto/festival..dto';
+import { getFestivalDto, getFestivalbyDateDto } from './dto/festival..dto';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -30,12 +39,23 @@ export class FestivalRepository extends Repository<Festival> {
   }
 
   // 날짜 범위로 축제 정보를 가져오는 API
-  async getFestivalByDate(startDate: Date, endDate: Date): Promise<Festival[]> {
+  async getFestivalByDate(getFestivalbyDateDto): Promise<Festival[]> {
+    const { size, startDate, endDate }: getFestivalbyDateDto =
+      getFestivalbyDateDto;
     const festivals: Festival[] = await this.festivalRepository.find({
+      select: [
+        'festival_id',
+        'first_image',
+        'title',
+        'event_start_date',
+        'event_end_date',
+      ],
       where: {
+        first_image: Not(IsNull()),
         event_start_date: LessThan(endDate),
         event_end_date: MoreThan(startDate),
       },
+      take: size,
     });
 
     if (festivals.length == 0) {

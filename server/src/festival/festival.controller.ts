@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { FestivalService } from './festival.service';
 import { Festival } from './festival.entity';
-import { getFestivalDto } from './dto/festival..dto';
+import { getFestivalDto, getFestivalbyDateDto } from './dto/festival..dto';
 
 @Controller('festival')
 export class FestivalController {
@@ -21,12 +21,11 @@ export class FestivalController {
     return this.festivalService.getAllFestival();
   }
 
-  @Get('/getbydate/:startDate/:endDate')
+  @Get('/getbydate')
   GetFestivalByDate(
-    @Param('startDate') startDate: Date,
-    @Param('endDate') endDate: Date,
+    @Query() getFestivalbyDateDto: getFestivalbyDateDto,
   ): Promise<Festival[]> {
-    return this.festivalService.getFestivalByDate(startDate, endDate);
+    return this.festivalService.getFestivalByDate(getFestivalbyDateDto);
   }
 
   // transformOption에서 설정한 옵션: 암묵적 타입변환을 허용함!!
