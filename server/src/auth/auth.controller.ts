@@ -1,6 +1,16 @@
-import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from './decorator/get-user.decorator';
+import { User } from './user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -16,7 +26,14 @@ export class AuthController {
   @Post('/signin')
   signin(
     @Body(ValidationPipe) authCredentialDto: AuthCredentialDto,
-  ): Promise<string> {
+  ): Promise<{ accessToken: string }> {
     return this.authService.signIn(authCredentialDto);
+  }
+
+  @Post('/test')
+  // UseGuards는 nestjs에서 제공하는 인증 미들웨어
+  @UseGuards(AuthGuard())
+  test(@GetUser() user: User) {
+    console.log('req', user);
   }
 }

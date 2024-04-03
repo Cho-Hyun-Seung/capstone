@@ -46,15 +46,17 @@ export class UserRepository extends Repository<User> {
     }
   }
 
-  async loginUser(authCredentialDto: AuthCredentialDto): Promise<string> {
+  async loginUser(
+    authCredentialDto: AuthCredentialDto,
+  ): Promise<{ accessToken: string }> {
     const { username, password } = authCredentialDto;
     const user = await this.userRepository.findOneBy({ username });
     if (user && (await bcrypt.compare(password, user.password))) {
       // 유저 토큰 생성 (secret + payload)
       // 페이로드에는 중요한 정보가 들어가면 안됨
       const payload = { username };
-      const accessToken = await this.jwtService.sign(payload);
-      return '로그인 성공';
+      const accessToken: string = await this.jwtService.sign(payload);
+      return { accessToken };
     } else {
       throw new UnauthorizedException('로그인 실패');
     }
