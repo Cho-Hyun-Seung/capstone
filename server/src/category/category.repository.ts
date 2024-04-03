@@ -3,22 +3,30 @@ import { Category } from './category.entity';
 import { DataSource, Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/category.dto';
 import { categories } from './category.list';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class CategoryRepository extends Repository<Category> {
-  constructor(private dataSource: DataSource) {
-    super(Category, dataSource.createEntityManager());
+  constructor(
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
+  ) {
+    super(
+      categoryRepository.target,
+      categoryRepository.manager,
+      categoryRepository.queryRunner,
+    );
   }
 
   async createCategory(
     createCategoryDto: CreateCategoryDto,
   ): Promise<Category> {
     const { category_code, category_name } = createCategoryDto;
-    const category = this.create({
+    const category = this.categoryRepository.create({
       category_code,
       category_name,
     });
-    await this.save(category);
+    await this.categoryRepository.save(category);
 
     return category;
   }
@@ -30,30 +38,30 @@ export class CategoryRepository extends Repository<Category> {
       resultCategory.category_code = category.category_code;
       resultCategory.category_name = category.category_name;
       if (category.category_code.length === 3) {
-        resultCategory.parent = await this.findOneBy({
+        resultCategory.parent = await this.categoryRepository.findOneBy({
           category_code: category.category_code,
         });
       }
 
       if (category.category_code.length === 5) {
-        resultCategory.parent = await this.findOneBy({
+        resultCategory.parent = await this.categoryRepository.findOneBy({
           category_code: category.category_code.substring(0, 3),
         });
       }
 
       if (category.category_code.length === 9) {
-        resultCategory.parent = await this.findOneBy({
+        resultCategory.parent = await this.categoryRepository.findOneBy({
           category_code: category.category_code.substring(0, 5),
         });
       }
       console.log(resultCategory);
 
-      await this.dataSource.manager.save(resultCategory);
+      await this.categoryRepository.save(resultCategory);
     }
   }
 
   async getCategoryByCode(code: string): Promise<Category> {
-    return await this.findOne({
+    return await this.categoryRepository.findOne({
       where: {
         category_code: code,
       },
@@ -61,20 +69,20 @@ export class CategoryRepository extends Repository<Category> {
   }
 
   async getRootCategory(): Promise<Category[]> {
-    return await this.dataSource.manager
+    return await this.categoryRepository.manager
       .getTreeRepository(Category)
       .findRoots();
   }
 
   async getDepth2Category(): Promise<Category[]> {
-    return await this.dataSource.manager
+    return await this.categoryRepository.manager
       .getTreeRepository(Category)
       .findTrees({ depth: 2 });
   }
 
   async getDescendantsCategory(parentCode: string): Promise<Category[]> {
     const parentCategory = await this.getCategoryByCode(parentCode);
-    const descendatsCategory = await this.dataSource.manager
+    const descendatsCategory = await this.categoryRepository.manager
       .getTreeRepository(Category)
       .findDescendants(parentCategory);
 

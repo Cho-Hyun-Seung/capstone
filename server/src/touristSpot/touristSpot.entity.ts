@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Tourist_Spot extends BaseEntity {
+export class TouristSpot extends BaseEntity {
   @PrimaryGeneratedColumn()
   tourist_spot_id: number;
 

@@ -3,16 +3,24 @@ import { Festival } from './festival.entity';
 import { DataSource, In, LessThan, Like, MoreThan, Repository } from 'typeorm';
 import { Category } from 'src/category/category.entity';
 import { getFestivalDto } from './dto/festival..dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class FestivalRepository extends Repository<Festival> {
-  constructor(private dataSouce: DataSource) {
-    super(Festival, dataSouce.createEntityManager());
+  constructor(
+    @InjectRepository(Festival)
+    private festivalRepository: Repository<Festival>,
+  ) {
+    super(
+      festivalRepository.target,
+      festivalRepository.manager,
+      festivalRepository.queryRunner,
+    );
   }
 
   // 모든 축제 정보를 가져오는 API
   async getAllFestivals(): Promise<Festival[]> {
-    const festivals: Festival[] = await this.find();
+    const festivals: Festival[] = await this.festivalRepository.find();
 
     if (festivals.length == 0) {
       throw new NotFoundException("Can't find festival");
@@ -23,7 +31,7 @@ export class FestivalRepository extends Repository<Festival> {
 
   // 날짜 범위로 축제 정보를 가져오는 API
   async getFestivalByDate(startDate: Date, endDate: Date): Promise<Festival[]> {
-    const festivals: Festival[] = await this.find({
+    const festivals: Festival[] = await this.festivalRepository.find({
       where: {
         event_start_date: LessThan(endDate),
         event_end_date: MoreThan(startDate),
@@ -60,7 +68,8 @@ export class FestivalRepository extends Repository<Festival> {
     const festivalCategoryCodes: string[] = festivalCategory.map(
       (v) => v.category_code,
     );
-    const festivals: Festival[] = await this.createQueryBuilder()
+    const festivals: Festival[] = await this.festivalRepository
+      .createQueryBuilder()
       .where({
         event_end_date: MoreThan(today),
         category: In([...festivalCategoryCodes]),

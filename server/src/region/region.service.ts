@@ -5,10 +5,7 @@ import { Region } from './region.entity';
 
 @Injectable()
 export class RegionService {
-  constructor(
-    @InjectRepository(RegionRepository)
-    private regionRepository: RegionRepository,
-  ) {}
+  constructor(private regionRepository: RegionRepository) {}
 
   async getRootRegion(): Promise<Region[]> {
     return await this.regionRepository.getRootRegion();

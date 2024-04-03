@@ -5,10 +5,7 @@ import { CreateCategoryDto } from './dto/category.dto';
 import { Category } from './category.entity';
 @Injectable()
 export class CategoryService {
-  constructor(
-    @InjectRepository(CategoryRepository)
-    private categoryRepository: CategoryRepository,
-  ) {}
+  constructor(private categoryRepository: CategoryRepository) {}
 
   // 카테고리 입력을 통해 카테고리 생성하기
   createCategory(createCategoryDto: CreateCategoryDto): Promise<Category> {

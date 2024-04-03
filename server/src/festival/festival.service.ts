@@ -9,7 +9,6 @@ import { getFestivalDto } from './dto/festival..dto';
 @Injectable()
 export class FestivalService {
   constructor(
-    @InjectRepository(FestivalRepository)
     private festivalRepository: FestivalRepository,
     private cateogryResository: CategoryRepository,
   ) {}
