@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap'
+import '../css/Navbar.css'
 
 const MainNavbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -13,7 +14,7 @@ const MainNavbar = () => {
   }
 
   return (
-    <>
+    <div className='main_navbar'>
       <Navbar bg='light' data-bs-theme='light'>
         <Container>
           <Navbar.Brand href='/'>Navbar</Navbar.Brand>
@@ -41,7 +42,7 @@ const MainNavbar = () => {
           </Nav>
         </Container>
       </Navbar>
-    </>
+    </div>
   )
 }
 

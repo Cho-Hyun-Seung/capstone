@@ -60,8 +60,8 @@ const RegionList = () => {
               <ListGroup.Item
                 className={
                   selectParentRegion === regionName
-                    ? 'list-group-item active'
-                    : 'list-group-item'
+                    ? 'parent-list-group-item active'
+                    : 'parent-list-group-item'
                 }
                 key={regionName}
                 onClick={() => onClickParentRegion(regionName)}
@@ -76,9 +76,11 @@ const RegionList = () => {
             {childRegions.map((regionName) => (
               <ListGroup.Item
                 className={
-                  selectChildRegions.includes(regionName)
-                    ? 'list-group-item active'
-                    : 'list-group-item'
+                  selectChildRegions.includes(
+                    `${selectParentRegion} ${regionName}`
+                  )
+                    ? 'child-list-group-item active'
+                    : 'child-list-group-item'
                 }
                 key={regionName}
                 onClick={() =>

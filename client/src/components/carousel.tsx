@@ -1,12 +1,14 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { Col, Row } from 'react-bootstrap'
 import Carousel from 'react-bootstrap/Carousel'
+import '../css/carousel.css'
 
 interface ICarouselFestival {
   festival_id: number
   title: string
-  event_start_date: Date
-  event_end_date: Date
+  event_start_date: string
+  event_end_date: string
   first_image: string
 }
 
@@ -54,19 +56,31 @@ const MainCarousel = () => {
 
   return (
     <Carousel
+      className='carousel-container'
       activeIndex={index}
       onSelect={handleSelect}
       onSlid={handleCarouselEnd}
     >
       {festivals.map((festival, idx) => (
-        <Carousel.Item key={idx + festivals.length} interval={500}>
-          <img
-            src={festival.first_image}
-            alt={`Slide ${idx + festivals.length}`}
-          />
-          <Carousel.Caption>
-            <h3>{festival.title}</h3>
-          </Carousel.Caption>
+        <Carousel.Item key={idx + festivals.length} interval={1500}>
+          <Row>
+            <Col xs={6} className='festival_info'>
+              <h1 className='festival_title'>{festival.title}</h1>
+              <h3 className='festival_schedule'>
+                {festival.event_start_date.split('T')[0]} ~{' '}
+                {festival.event_end_date.split('T')[0]}
+              </h3>
+            </Col>
+            <Col xs={6} className='carousel-image'>
+              <img
+                src={festival.first_image}
+                alt={`Slide ${idx + festivals.length}`}
+              />
+            </Col>
+          </Row>
+          {/* <Carousel.Caption>
+              <h3>{festival.title}</h3>
+            </Carousel.Caption> */}
         </Carousel.Item>
       ))}
     </Carousel>
