@@ -66,13 +66,14 @@ const MainCarousel = () => {
           <Row>
             <Col xs={6} className='festival_info'>
               <h1 className='festival_title'>{festival.title}</h1>
-              <h3 className='festival_schedule'>
+              <h5 className='festival_schedule'>
                 {festival.event_start_date.split('T')[0]} ~{' '}
                 {festival.event_end_date.split('T')[0]}
-              </h3>
+              </h5>
             </Col>
-            <Col xs={6} className='carousel-image'>
+            <Col xs={6} className='carousel-image-box'>
               <img
+                className='carousel-image'
                 src={festival.first_image}
                 alt={`Slide ${idx + festivals.length}`}
               />

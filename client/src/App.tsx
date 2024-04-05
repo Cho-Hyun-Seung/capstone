@@ -9,8 +9,9 @@ import MainNavbar from './components/MainNavbar'
 import Festival from './pages/Festival'
 
 function App() {
+  const isRoot = location.pathname === '/'
   return (
-    <div className='App'>
+    <div className={isRoot ? 'main-page' : 'App'}>
       <MainNavbar />
       {/* <nav>
         <Link to={'/'}> Home</Link>
@@ -28,6 +29,10 @@ function App() {
         <Route path='/input2' element={<Input2 />} />
         <Route path='/list' element={<List />} />
       </Routes>
+      <br />
+      <br />
+      <br />
+      <br />
     </div>
   )
 }

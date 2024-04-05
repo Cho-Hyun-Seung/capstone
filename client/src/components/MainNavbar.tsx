@@ -14,8 +14,8 @@ const MainNavbar = () => {
   }
 
   return (
-    <div className='main_navbar'>
-      <Navbar bg='light' data-bs-theme='light'>
+    <div>
+      <Navbar className='main_navbar'>
         <Container>
           <Navbar.Brand href='/'>Navbar</Navbar.Brand>
           <Nav className='ms-auto'>

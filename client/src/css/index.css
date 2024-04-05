@@ -2,10 +2,8 @@
   font-family: 'gmarketSansMedium';
   src: url('../assets/fonts/GmarketSansTTFMedium.ttf');
 }
-
 :root {
   /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
-  font-family: 'gmarketSansMedium';
   line-height: 1.5;
   font-weight: 400;
 
