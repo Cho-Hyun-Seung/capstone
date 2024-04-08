@@ -7,6 +7,8 @@ import Input2 from './pages/Input2'
 import List from './pages/List'
 import MainNavbar from './components/MainNavbar'
 import Festival from './pages/Festival'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 function App() {
   const isRoot = location.pathname === '/'

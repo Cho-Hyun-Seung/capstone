@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Col, Container, Dropdown, ListGroup, Row } from 'react-bootstrap'
-import '../../css/RegionList.css'
+import { Button, Col, Container, Dropdown, Row } from 'react-bootstrap'
+// import '../../css/RegionList.css'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import dayjs from 'dayjs'
+import { Box } from '@mui/material'
 
 const RegionList = () => {
   const [regions, setRegions] = useState<string[]>([])
   const [selectParentRegion, setSelectParentRegion] = useState<string>('')
   const [childRegions, setChildRegions] = useState<string[]>([])
   const [selectChildRegions, setSelectChildRegions] = useState<string[]>([])
+  const [startDate, setStartDate] = useState<string>('')
+  const [endDate, setendDate] = useState<string>('')
   const [childMenuOpen, setChildMenuOpen] = useState<boolean>(false) // 새로운 state 추가
 
   const onClickParentRegion = (regionName: string) => {
@@ -60,10 +67,11 @@ const RegionList = () => {
   }, [])
 
   return (
-    <Container>
-      <Row>
+    <Container style={{ margin: 'auto' }}>
+      <Row style={{ marginBottom: '10px' }}>
         <Col xs={3}>시/도 선택</Col>
         <Col xs={3}>시/군/구 선택</Col>
+        <Col xs={4}>시기</Col>
       </Row>
       <Row>
         <Col xs={3}>
@@ -72,7 +80,7 @@ const RegionList = () => {
               variant='success'
               id='dropdown-basic'
               className='dropdown-toggle'
-              style={{ minWidth: '168px' }}
+              style={{ minWidth: '168px', minHeight: '56px' }}
             >
               {selectParentRegion === '' ? '시/도 선택' : selectParentRegion}
             </Dropdown.Toggle>
@@ -109,7 +117,10 @@ const RegionList = () => {
               onClick={onClickShigungu}
               variant='success'
               className='dropdown-toggle'
-              style={{ minWidth: '168px', maxWidth: '168px' }}
+              style={{
+                minWidth: '168px',
+                minHeight: '56px',
+              }}
             >
               {selectChildRegions.length === 0
                 ? '시/군/구 선택'
@@ -146,6 +157,27 @@ const RegionList = () => {
               ))}
             </Dropdown.Menu>
           </Dropdown>
+        </Col>
+        <Col xs={4}>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label='시작일'
+                defaultValue={dayjs()}
+                sx={{ height: '3px', maxWidth: '200px' }}
+              />
+            </LocalizationProvider>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label='종료일'
+                defaultValue={dayjs()}
+                sx={{ height: '3px', maxWidth: '200px' }}
+              />
+            </LocalizationProvider>
+          </div>
+        </Col>
+        <Col xs={2}>
+          <Button style={{ minHeight: '56px', width: '120px' }}>검색</Button>
         </Col>
       </Row>
       <h1>{selectChildRegions}</h1>
