@@ -13,10 +13,14 @@ import {
 import { Category } from 'src/category/category.entity';
 import { getFestivalDto, getFestivalbyDateDto } from './dto/festival..dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CategoryService } from 'src/category/category.service';
+import { CategoryRepository } from 'src/category/category.repository';
 
 @Injectable()
 export class FestivalRepository extends Repository<Festival> {
   constructor(
+    @InjectRepository(Category)
+    private categoryRepository: CategoryRepository,
     @InjectRepository(Festival)
     private festivalRepository: Repository<Festival>,
   ) {
@@ -73,7 +77,7 @@ export class FestivalRepository extends Repository<Festival> {
     getFestivalDto: getFestivalDto,
     festivalCategory: Category[],
   ): Promise<Festival[]> {
-    const { pageNum, pageSize, region } = getFestivalDto;
+    const { pageNum, pageSize, regions } = getFestivalDto;
     // 오늘 날짜를 계산함
     const date = new Date();
     const year = date.getFullYear();
@@ -85,17 +89,24 @@ export class FestivalRepository extends Repository<Festival> {
     //  2. 종료일이 오늘보다 큰 경우만 가져옴
     //  3. 시작일 오름차순으로 정렬함
     //  4. 페이지에 보여질 항목 개수, 페이지 번호를 활용하여 전송할 축제를 결정함
-    const festivalCategoryCodes: string[] = festivalCategory.map(
-      (v) => v.category_code,
-    );
+    const festivalCategoryCodes: string[] = festivalCategory.map((category) => {
+      return category.category_code;
+    });
+    console.log(regions);
+
+    const regionConditions = regions.map((regionItem) => {
+      return { address1: Like(`%${regionItem}%`) };
+    });
+
     const festivals: Festival[] = await this.festivalRepository
       .createQueryBuilder()
       .where({
         event_end_date: MoreThan(today),
-        category: In([...festivalCategoryCodes]),
-        address1: Like(`%${region}%`),
+        category_code: In([...festivalCategoryCodes]),
+        // ...regionConditions.reduce((prev, curr) => ({ ...prev, ...curr }), {}),
       })
-      .orderBy({ 'festival.event_start_date': 'ASC' })
+      .andWhere(regionConditions)
+      .orderBy('festival.event_start_date', 'ASC')
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
       .getMany();

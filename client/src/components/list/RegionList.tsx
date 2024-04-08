@@ -5,16 +5,17 @@ import { Button, Col, Container, Dropdown, Row } from 'react-bootstrap'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { Box } from '@mui/material'
 
 const RegionList = () => {
+  const [pageNum, setPageNum] = useState<number>(1)
   const [regions, setRegions] = useState<string[]>([])
   const [selectParentRegion, setSelectParentRegion] = useState<string>('')
   const [childRegions, setChildRegions] = useState<string[]>([])
   const [selectChildRegions, setSelectChildRegions] = useState<string[]>([])
-  const [startDate, setStartDate] = useState<string>('')
-  const [endDate, setendDate] = useState<string>('')
+  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs())
+  const [endDate, setEndDate] = useState<Dayjs | null>()
   const [childMenuOpen, setChildMenuOpen] = useState<boolean>(false) // 새로운 state 추가
 
   const onClickParentRegion = (regionName: string) => {
@@ -48,6 +49,27 @@ const RegionList = () => {
     } else {
       setSelectChildRegions([...selectChildRegions, resultRegion])
     }
+  }
+
+  const onClickSearchButoon = () => {
+    const fetchData = async () => {
+      await axios
+        .get(`/api/festival/getbyrange`, {
+          params: {
+            pageNum: pageNum,
+            pageSize: 20,
+            regions: selectChildRegions,
+          },
+        })
+        .then((res: any) => {
+          console.log(res.data)
+        })
+        .catch((error: any) => {
+          console.error('Error fetching festivals:', error)
+        })
+    }
+
+    fetchData()
   }
 
   useEffect(() => {
@@ -110,9 +132,7 @@ const RegionList = () => {
           </Dropdown>
         </Col>
         <Col xs={3}>
-          <Dropdown
-            show={childMenuOpen} // 새로운 prop 추가
-          >
+          <Dropdown show={childMenuOpen}>
             <Dropdown.Toggle
               onClick={onClickShigungu}
               variant='success'
@@ -162,6 +182,8 @@ const RegionList = () => {
           <div style={{ display: 'flex', gap: '10px' }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
+                value={startDate}
+                onChange={(v) => setStartDate(v)}
                 label='시작일'
                 defaultValue={dayjs()}
                 sx={{ height: '3px', maxWidth: '200px' }}
@@ -170,14 +192,21 @@ const RegionList = () => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label='종료일'
-                defaultValue={dayjs()}
+                value={endDate}
+                onChange={(v) => setEndDate(v)}
+                defaultValue={dayjs().add(1, 'year')}
                 sx={{ height: '3px', maxWidth: '200px' }}
               />
             </LocalizationProvider>
           </div>
         </Col>
         <Col xs={2}>
-          <Button style={{ minHeight: '56px', width: '120px' }}>검색</Button>
+          <Button
+            onClick={onClickSearchButoon}
+            style={{ minHeight: '56px', width: '120px' }}
+          >
+            검색
+          </Button>
         </Col>
       </Row>
       <h1>{selectChildRegions}</h1>
