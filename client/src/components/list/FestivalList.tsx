@@ -2,8 +2,9 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import RegionList from './RegionList'
 import { Col, Container, Row } from 'react-bootstrap'
+import dayjs from 'dayjs'
 
-interface IFestivals {
+interface IFestival {
   address1: string
   address2?: string
   age_limit?: string
@@ -27,24 +28,65 @@ interface IFestivals {
 }
 
 const FestivalList = () => {
-  // 화면에 보여질 축제 정보
-  // 현재 페이지 관리
-  const [festivals, setFestivals] = useState<IFestivals[] | []>([])
-  const [pages, setPages] = useState<number>(1)
+  const [festivals, setFestivals] = useState<IFestival[]>([])
+  const [childRegions, setChildRegions] = useState<string[]>([])
+  const [startDate, setStartDate] = useState<string | null>(
+    dayjs().format('YYYY-MM-DD')
+  )
+  const [endDate, setEndDate] = useState<string | null>(
+    dayjs().add(1, 'year').format('YYYY-MM-DD')
+  )
 
-  const getFestivals = (festivalData: IFestivals[]) => {
-    setFestivals(festivalData)
+  const getFestivals = async () => {
+    try {
+      const response = await axios.get(`/api/festival/getbyrange`, {
+        params: {
+          pageNum: 1,
+          pageSize: 20,
+          regions: childRegions,
+          endDate: endDate,
+          startDate: startDate,
+        },
+      })
+      setFestivals(response.data)
+    } catch (error) {
+      console.error('축제 가져오기 오류:', error)
+      throw new Error('축제를 가져오는 중 오류가 발생했습니다.')
+    }
+  }
+
+  const getStartDate = (date: string) => {
+    setStartDate(date)
+  }
+
+  const getEndDate = (date: string) => {
+    setEndDate(date)
+  }
+
+  const getChildRegions = (regions: string[]) => {
+    setChildRegions(regions)
+    console.log(regions)
+  }
+
+  const onClickButton = () => {
+    getFestivals()
     console.log(festivals)
   }
 
-  useEffect(() => {}, [festivals])
+  useEffect(() => {
+    getFestivals() // 초기 검색
+  }, [])
 
   return (
     <div>
       <Container>
-        <RegionList getFestivals={getFestivals} />
+        <RegionList
+          getStartDate={getStartDate}
+          getEndDate={getEndDate}
+          getChildRegions={getChildRegions}
+          onClickButton={onClickButton}
+        />
         <Row xs={1} md={5} className='g-4'>
-          {/* 1 column on extra small devices, 5 columns on medium devices */}
           {festivals.map((festival) => (
             <Col key={festival.festival_id}>
               <img
@@ -59,12 +101,6 @@ const FestivalList = () => {
       </Container>
     </div>
   )
-
-  // 1. 20개 가져온거 보여주기
-
-  // 2. 페이지네이션 진행하기
-
-  // 3. 페이지 이동 시 다시 로딩하기
 }
 
 export default FestivalList

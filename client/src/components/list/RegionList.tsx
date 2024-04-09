@@ -1,26 +1,19 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Button, Col, Container, Dropdown, Row } from 'react-bootstrap'
-// import '../../css/RegionList.css'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import dayjs, { Dayjs } from 'dayjs'
-import { Box } from '@mui/material'
+import dayjs from 'dayjs'
 
 const RegionList = (props: any) => {
-  const [pageNum, setPageNum] = useState<number>(1)
   const [regions, setRegions] = useState<string[]>([])
   const [selectParentRegion, setSelectParentRegion] = useState<string>('')
   const [childRegions, setChildRegions] = useState<string[]>([])
   const [selectChildRegions, setSelectChildRegions] = useState<string[]>([])
-  const [startDate, setStartDate] = useState<string | null>(
-    dayjs().format('YYYY-MM-DD')
-  )
-  const [endDate, setEndDate] = useState<string | null>(
-    dayjs().add(1, 'year').format('YYYY-MM-DD')
-  )
   const [childMenuOpen, setChildMenuOpen] = useState<boolean>(false)
+  const [selectAllChildRegions, setSelectAllChildRegions] =
+    useState<boolean>(false)
 
   const onClickParentRegion = (regionName: string) => {
     setSelectParentRegion(regionName)
@@ -39,35 +32,28 @@ const RegionList = (props: any) => {
   const onClickShigungu = () => {
     setChildMenuOpen(!childMenuOpen)
   }
-
   const onClickChildRegion = (parentRegion: string, regionName: string) => {
+    console.log(regionName)
     const resultRegion = `${parentRegion} ${regionName}`
     if (selectChildRegions.includes(resultRegion)) {
-      setSelectChildRegions(
-        selectChildRegions.filter((v) => v !== resultRegion)
+      setSelectChildRegions((prevRegions) =>
+        prevRegions.filter((v) => v !== resultRegion)
       )
     } else {
-      setSelectChildRegions([...selectChildRegions, resultRegion])
+      setSelectChildRegions((prevRegions) => [...prevRegions, resultRegion])
     }
   }
 
-  const onClickButton = async () => {
-    console.log(startDate, endDate)
-    try {
-      const response = await axios.get(`/api/festival/getbyrange`, {
-        params: {
-          pageNum: pageNum,
-          pageSize: 20,
-          regions: selectChildRegions,
-          endDate: endDate,
-          startDate: startDate,
-        },
-      })
-      return props.getFestivals(response.data)
-    } catch (error) {
-      console.error('축제 가져오기 오류:', error)
-      throw new Error('축제를 가져오는 중 오류가 발생했습니다.')
+  const onSelectAllChildRegions = () => {
+    if (selectAllChildRegions) {
+      setSelectChildRegions([])
+    } else {
+      const allChildRegions = childRegions.map(
+        (regionName) => `${selectParentRegion} ${regionName}`
+      )
+      setSelectChildRegions(allChildRegions)
     }
+    setSelectAllChildRegions(!selectAllChildRegions)
   }
 
   useEffect(() => {
@@ -82,6 +68,11 @@ const RegionList = (props: any) => {
     }
     fetchData()
   }, [])
+
+  useEffect(() => {
+    props.getChildRegions(selectChildRegions)
+  }, [selectChildRegions])
+
   return (
     <Container style={{ margin: 'auto', marginBottom: '50px' }}>
       <Row style={{ marginBottom: '10px' }}>
@@ -138,6 +129,8 @@ const RegionList = (props: any) => {
             >
               {selectChildRegions.length === 0
                 ? '시/군/구 선택'
+                : selectChildRegions.length === childRegions.length
+                ? '전체선택'
                 : selectChildRegions.length === 1
                 ? selectChildRegions[0].split(' ')[1]
                 : `${selectChildRegions[0].split(' ')[1]} 등 ${
@@ -152,6 +145,12 @@ const RegionList = (props: any) => {
                 maxHeight: '200px',
               }}
             >
+              <Dropdown.Item
+                className='child-list-group-item'
+                onClick={onSelectAllChildRegions}
+              >
+                {selectAllChildRegions ? '전체선택 해제' : '전체선택'}
+              </Dropdown.Item>
               {childRegions.map((regionName) => (
                 <Dropdown.Item
                   className={
@@ -176,7 +175,7 @@ const RegionList = (props: any) => {
           <div style={{ display: 'flex', gap: '10px' }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                onChange={(v) => setStartDate(v!.format('YYYY-MM-DD'))}
+                onChange={(v) => props.getStartDate(v!.format('YYYY-MM-DD'))}
                 format='YYYY-MM-DD'
                 label='시작일'
                 defaultValue={dayjs()}
@@ -186,7 +185,7 @@ const RegionList = (props: any) => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label='종료일'
-                onChange={(v) => setEndDate(v!.format('YYYY-MM-DD'))}
+                onChange={(v) => props.getEndDate(v!.format('YYYY-MM-DD'))}
                 format='YYYY-MM-DD'
                 defaultValue={dayjs().add(1, 'year')}
                 sx={{ height: '3px', maxWidth: '200px' }}
@@ -196,7 +195,7 @@ const RegionList = (props: any) => {
         </Col>
         <Col xs={2}>
           <Button
-            onClick={onClickButton}
+            onClick={props.onClickButton}
             style={{ minHeight: '56px', width: '120px' }}
           >
             검색
