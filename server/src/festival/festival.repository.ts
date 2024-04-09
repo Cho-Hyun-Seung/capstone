@@ -5,8 +5,10 @@ import {
   In,
   IsNull,
   LessThan,
+  LessThanOrEqual,
   Like,
   MoreThan,
+  MoreThanOrEqual,
   Not,
   Repository,
 } from 'typeorm';
@@ -77,7 +79,7 @@ export class FestivalRepository extends Repository<Festival> {
     getFestivalDto: getFestivalDto,
     festivalCategory: Category[],
   ): Promise<Festival[]> {
-    const { pageNum, pageSize, regions } = getFestivalDto;
+    const { pageNum, pageSize, regions, endDate, startDate } = getFestivalDto;
     // 오늘 날짜를 계산함
     const date = new Date();
     const year = date.getFullYear();
@@ -101,9 +103,9 @@ export class FestivalRepository extends Repository<Festival> {
     const festivals: Festival[] = await this.festivalRepository
       .createQueryBuilder()
       .where({
-        event_end_date: MoreThan(today),
+        event_start_date: MoreThanOrEqual(startDate),
+        event_end_date: LessThanOrEqual(endDate),
         category_code: In([...festivalCategoryCodes]),
-        // ...regionConditions.reduce((prev, curr) => ({ ...prev, ...curr }), {}),
       })
       .andWhere(regionConditions)
       .orderBy('festival.event_start_date', 'ASC')
@@ -112,7 +114,7 @@ export class FestivalRepository extends Repository<Festival> {
       .getMany();
 
     if (festivals.length === 0) {
-      throw new NotFoundException(`더이상 축제 정보가 존재하지 않습니다.`);
+      throw new NotFoundException(`축제 정보가 존재하지 않습니다.`);
     }
     return festivals;
   }

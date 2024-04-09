@@ -1,36 +1,64 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import RegionList from './RegionList'
+import { Col, Container, Row } from 'react-bootstrap'
+
+interface IFestivals {
+  address1: string
+  address2?: string
+  age_limit?: string
+  booktour: boolean
+  category_code: string
+  charge?: string
+  content_id: number
+  content_type_id: number
+  discount_info?: string
+  event_end_date: string
+  event_start_date: string
+  festival_id: number
+  first_image?: string
+  first_image2?: string
+  homepage?: string
+  nx: number
+  ny: number
+  overview?: string
+  tel?: string
+  title: string
+}
 
 const FestivalList = () => {
   // 화면에 보여질 축제 정보
   // 현재 페이지 관리
-  const [festials, setFestivals] = useState([])
+  const [festivals, setFestivals] = useState<IFestivals[] | []>([])
   const [pages, setPages] = useState<number>(1)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const today = new Date()
-        const year = today.getFullYear()
-        const month = ('0' + (today.getMonth() + 1)).slice(-2)
-        const nextMonth =
-          month === '12' ? '01' : ('0' + (today.getMonth() + 2)).slice(-2)
-        const day = ('0' + today.getDate()).slice(-2)
-        const startDate = `${year}/${month}/${day}`
-        const endDate = `${year + 2}/${nextMonth}/${day}`
+  const getFestivals = (festivalData: IFestivals[]) => {
+    setFestivals(festivalData)
+    console.log(festivals)
+  }
 
-        // 20개씩 가져옴
-        const response = await axios.get(
-          `/api/festival/getbydate?startDate=${startDate}&endDate=${endDate}&size=20`
-        )
-        setFestivals(response.data)
-      } catch (error) {
-        console.error('Error fetching carousel festival:', error)
-      }
-    }
+  useEffect(() => {}, [festivals])
 
-    fetchData()
-  }, [])
+  return (
+    <div>
+      <Container>
+        <RegionList getFestivals={getFestivals} />
+        <Row xs={1} md={5} className='g-4'>
+          {/* 1 column on extra small devices, 5 columns on medium devices */}
+          {festivals.map((festival) => (
+            <Col key={festival.festival_id}>
+              <img
+                src={festival.first_image2}
+                alt={festival.title}
+                className='img-fluid'
+              />
+              <h5>{festival.title}</h5>
+            </Col>
+          ))}
+        </Row>
+      </Container>
+    </div>
+  )
 
   // 1. 20개 가져온거 보여주기
 

@@ -19,6 +19,12 @@ export class getFestivalDto {
   @IsOptional()
   @IsArray()
   regions: string[] = [];
+
+  @IsDate()
+  startDate: Date;
+
+  @IsDate()
+  endDate: Date;
 }
 
 export class getFestivalbyDateDto {
@@ -30,9 +36,4 @@ export class getFestivalbyDateDto {
 
   @IsDate()
   endDate: Date;
-}
-function ApiProperty(arg0: {
-  type: StringConstructor[];
-}): (target: getFestivalDto, propertyKey: 'region') => void {
-  throw new Error('Function not implemented.');
 }

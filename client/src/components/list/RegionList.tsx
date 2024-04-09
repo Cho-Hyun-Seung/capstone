@@ -8,19 +8,22 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs, { Dayjs } from 'dayjs'
 import { Box } from '@mui/material'
 
-const RegionList = () => {
+const RegionList = (props: any) => {
   const [pageNum, setPageNum] = useState<number>(1)
   const [regions, setRegions] = useState<string[]>([])
   const [selectParentRegion, setSelectParentRegion] = useState<string>('')
   const [childRegions, setChildRegions] = useState<string[]>([])
   const [selectChildRegions, setSelectChildRegions] = useState<string[]>([])
-  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs())
-  const [endDate, setEndDate] = useState<Dayjs | null>()
-  const [childMenuOpen, setChildMenuOpen] = useState<boolean>(false) // 새로운 state 추가
+  const [startDate, setStartDate] = useState<string | null>(
+    dayjs().format('YYYY-MM-DD')
+  )
+  const [endDate, setEndDate] = useState<string | null>(
+    dayjs().add(1, 'year').format('YYYY-MM-DD')
+  )
+  const [childMenuOpen, setChildMenuOpen] = useState<boolean>(false)
 
   const onClickParentRegion = (regionName: string) => {
     setSelectParentRegion(regionName)
-    // 자식 노드들을 초기화함
     setSelectChildRegions([])
     axios
       .get(`/api/region/childregions?regionName=${regionName}`)
@@ -29,15 +32,12 @@ const RegionList = () => {
         setChildRegions(resData)
       })
       .catch((error: any) => {
-        console.error('Error fetching child regions:', error)
+        console.error('자식 지역을 가져오는 중 오류 발생:', error)
       })
   }
 
   const onClickShigungu = () => {
-    if (childMenuOpen) {
-      return setChildMenuOpen(false)
-    }
-    return setChildMenuOpen(true)
+    setChildMenuOpen(!childMenuOpen)
   }
 
   const onClickChildRegion = (parentRegion: string, regionName: string) => {
@@ -51,45 +51,39 @@ const RegionList = () => {
     }
   }
 
-  const onClickSearchButoon = () => {
-    const fetchData = async () => {
-      await axios
-        .get(`/api/festival/getbyrange`, {
-          params: {
-            pageNum: pageNum,
-            pageSize: 20,
-            regions: selectChildRegions,
-          },
-        })
-        .then((res: any) => {
-          console.log(res.data)
-        })
-        .catch((error: any) => {
-          console.error('Error fetching festivals:', error)
-        })
+  const onClickButton = async () => {
+    console.log(startDate, endDate)
+    try {
+      const response = await axios.get(`/api/festival/getbyrange`, {
+        params: {
+          pageNum: pageNum,
+          pageSize: 20,
+          regions: selectChildRegions,
+          endDate: endDate,
+          startDate: startDate,
+        },
+      })
+      return props.getFestivals(response.data)
+    } catch (error) {
+      console.error('축제 가져오기 오류:', error)
+      throw new Error('축제를 가져오는 중 오류가 발생했습니다.')
     }
-
-    fetchData()
   }
 
   useEffect(() => {
     const fetchData = async () => {
-      await axios
-        .get(`/api/region/rootregions`)
-        .then((res: any) => {
-          const resData = res.data.map((v: any) => v['region'])
-          setRegions(resData)
-        })
-        .catch((error: any) => {
-          console.error('Error fetching root regions:', error)
-        })
+      try {
+        const response = await axios.get(`/api/region/rootregions`)
+        const resData = response.data.map((v: any) => v['region'])
+        setRegions(resData)
+      } catch (error) {
+        console.error('루트 지역을 가져오는 중 오류 발생:', error)
+      }
     }
-
     fetchData()
   }, [])
-
   return (
-    <Container style={{ margin: 'auto' }}>
+    <Container style={{ margin: 'auto', marginBottom: '50px' }}>
       <Row style={{ marginBottom: '10px' }}>
         <Col xs={3}>시/도 선택</Col>
         <Col xs={3}>시/군/구 선택</Col>
@@ -182,8 +176,8 @@ const RegionList = () => {
           <div style={{ display: 'flex', gap: '10px' }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                value={startDate}
-                onChange={(v) => setStartDate(v)}
+                onChange={(v) => setStartDate(v!.format('YYYY-MM-DD'))}
+                format='YYYY-MM-DD'
                 label='시작일'
                 defaultValue={dayjs()}
                 sx={{ height: '3px', maxWidth: '200px' }}
@@ -192,8 +186,8 @@ const RegionList = () => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label='종료일'
-                value={endDate}
-                onChange={(v) => setEndDate(v)}
+                onChange={(v) => setEndDate(v!.format('YYYY-MM-DD'))}
+                format='YYYY-MM-DD'
                 defaultValue={dayjs().add(1, 'year')}
                 sx={{ height: '3px', maxWidth: '200px' }}
               />
@@ -202,7 +196,7 @@ const RegionList = () => {
         </Col>
         <Col xs={2}>
           <Button
-            onClick={onClickSearchButoon}
+            onClick={onClickButton}
             style={{ minHeight: '56px', width: '120px' }}
           >
             검색

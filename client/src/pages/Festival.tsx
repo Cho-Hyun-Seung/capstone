@@ -1,9 +1,10 @@
+import FestivalList from '../components/list/FestivalList'
 import RegionList from '../components/list/RegionList'
 
 const Festival = () => {
   return (
     <div>
-      <RegionList />
+      <FestivalList />
     </div>
   )
 }
