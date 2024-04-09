@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import RegionList from './RegionList'
 import { Col, Container, Row } from 'react-bootstrap'
 import dayjs from 'dayjs'
-
+import '../../css/FestivalList.css'
 interface IFestival {
   address1: string
   address2?: string
@@ -86,15 +86,24 @@ const FestivalList = () => {
           getChildRegions={getChildRegions}
           onClickButton={onClickButton}
         />
-        <Row xs={1} md={5} className='g-4'>
+        <Row xs={1} md={3} className='g-4'>
           {festivals.map((festival) => (
             <Col key={festival.festival_id}>
-              <img
-                src={festival.first_image2}
-                alt={festival.title}
-                className='img-fluid'
-              />
-              <h5>{festival.title}</h5>
+              <div className='festival-box'>
+                <img
+                  src={festival.first_image}
+                  alt={festival.title}
+                  className='img-fluid'
+                />
+                <h5>{festival.title}</h5>
+                <a>
+                  {festival.event_start_date.split('T')[0]} ~{' '}
+                  {festival.event_end_date.split('T')[0]}
+                </a>
+                <a className='festival-address'>
+                  {festival.address1.split(' ').slice(0, 2).join(' ')}
+                </a>
+              </div>
             </Col>
           ))}
         </Row>
