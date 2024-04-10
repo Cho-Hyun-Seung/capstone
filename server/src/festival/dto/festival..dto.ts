@@ -37,3 +37,15 @@ export class getFestivalbyDateDto {
   @IsDate()
   endDate: Date;
 }
+
+export class countFestivalDto {
+  @IsOptional()
+  @IsArray()
+  regions: string[] = [];
+
+  @IsDate()
+  startDate: Date;
+
+  @IsDate()
+  endDate: Date;
+}

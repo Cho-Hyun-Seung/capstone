@@ -10,14 +10,18 @@ import {
 } from '@nestjs/common';
 import { FestivalService } from './festival.service';
 import { Festival } from './festival.entity';
-import { getFestivalDto, getFestivalbyDateDto } from './dto/festival..dto';
+import {
+  countFestivalDto,
+  getFestivalDto,
+  getFestivalbyDateDto,
+} from './dto/festival..dto';
 
 @Controller('festival')
 export class FestivalController {
   constructor(private festivalService: FestivalService) {}
 
   @Get('/all')
-  getAllFestival(): Promise<Festival[]> {
+  GetAllFestival(): Promise<Festival[]> {
     return this.festivalService.getAllFestival();
   }
 
@@ -39,7 +43,11 @@ export class FestivalController {
   GetFestivalByRange(
     @Query() getFestivalDto: getFestivalDto,
   ): Promise<Festival[]> {
-    console.log(getFestivalDto);
     return this.festivalService.getFestivalByRange(getFestivalDto);
+  }
+
+  @Get('/count')
+  CountAllFestival(@Query() countFestivalDto: countFestivalDto) {
+    return this.festivalService.countAllFestival(countFestivalDto);
   }
 }

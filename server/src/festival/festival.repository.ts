@@ -13,7 +13,11 @@ import {
   Repository,
 } from 'typeorm';
 import { Category } from 'src/category/category.entity';
-import { getFestivalDto, getFestivalbyDateDto } from './dto/festival..dto';
+import {
+  countFestivalDto,
+  getFestivalDto,
+  getFestivalbyDateDto,
+} from './dto/festival..dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryService } from 'src/category/category.service';
 import { CategoryRepository } from 'src/category/category.repository';
@@ -94,7 +98,6 @@ export class FestivalRepository extends Repository<Festival> {
     const festivalCategoryCodes: string[] = festivalCategory.map((category) => {
       return category.category_code;
     });
-    console.log(regions);
 
     const regionConditions = regions.map((regionItem) => {
       return { address1: Like(`%${regionItem}%`) };
@@ -117,5 +120,25 @@ export class FestivalRepository extends Repository<Festival> {
       throw new NotFoundException(`축제 정보가 존재하지 않습니다.`);
     }
     return festivals;
+  }
+
+  async countAllFestival(countFestivalDto: countFestivalDto): Promise<number> {
+    let { regions, endDate, startDate } = countFestivalDto;
+    regions = regions || [];
+    const regionConditions = regions.map((regionItem) => {
+      return { address1: Like(`%${regionItem}%`) };
+    });
+
+    const countFestival = await this.festivalRepository
+      .createQueryBuilder()
+      .where({
+        event_start_date: MoreThanOrEqual(startDate),
+        event_end_date: LessThanOrEqual(endDate),
+        // ...regionConditions,
+      })
+      .andWhere(regionConditions)
+      .getCount();
+    console.log('countFestival', countFestival);
+    return countFestival;
   }
 }

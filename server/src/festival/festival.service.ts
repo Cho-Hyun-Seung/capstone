@@ -4,7 +4,11 @@ import { FestivalRepository } from './festival.repository';
 import { Festival } from './festival.entity';
 import { CategoryRepository } from 'src/category/category.repository';
 import { Category } from 'src/category/category.entity';
-import { getFestivalDto, getFestivalbyDateDto } from './dto/festival..dto';
+import {
+  countFestivalDto,
+  getFestivalDto,
+  getFestivalbyDateDto,
+} from './dto/festival..dto';
 
 @Injectable()
 export class FestivalService {
@@ -34,5 +38,9 @@ export class FestivalService {
       getFestivalDto,
       festivalCategory,
     );
+  }
+
+  async countAllFestival(countFestivalDto: countFestivalDto): Promise<Number> {
+    return await this.festivalRepository.countAllFestival(countFestivalDto);
   }
 }
