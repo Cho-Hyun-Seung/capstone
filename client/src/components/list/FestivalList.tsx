@@ -85,13 +85,12 @@ const FestivalList = () => {
   const onClickButton = async () => {
     await getFestivals() // 축제 가져오기를 완료한 후에 페이지 번호를 설정
     await getMaxPage()
-    console.log(festivals)
   }
 
   useEffect(() => {
     getMaxPage()
     getFestivals() // 초기 검색
-  }, [])
+  }, [page])
 
   return (
     <div>

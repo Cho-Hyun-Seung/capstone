@@ -89,7 +89,6 @@ export class FestivalRepository extends Repository<Festival> {
     const year = date.getFullYear();
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
     const day = ('0' + date.getDate()).slice(-2);
-    const today = `${year}-${month}-${day}`;
     // 축제 정보를 가져오는 쿼리
     //  1. 제목, 시작일, 종료일, 위치를 가져옴
     //  2. 종료일이 오늘보다 큰 경우만 가져옴
@@ -122,9 +121,17 @@ export class FestivalRepository extends Repository<Festival> {
     return festivals;
   }
 
-  async countAllFestival(countFestivalDto: countFestivalDto): Promise<number> {
+  async countAllFestival(
+    countFestivalDto: countFestivalDto,
+    festivalCategory: Category[],
+  ): Promise<number> {
     let { regions, endDate, startDate } = countFestivalDto;
     regions = regions || [];
+
+    const festivalCategoryCodes: string[] = festivalCategory.map((category) => {
+      return category.category_code;
+    });
+
     const regionConditions = regions.map((regionItem) => {
       return { address1: Like(`%${regionItem}%`) };
     });
@@ -135,6 +142,7 @@ export class FestivalRepository extends Repository<Festival> {
         event_start_date: MoreThanOrEqual(startDate),
         event_end_date: LessThanOrEqual(endDate),
         // ...regionConditions,
+        category_code: In([...festivalCategoryCodes]),
       })
       .andWhere(regionConditions)
       .getCount();

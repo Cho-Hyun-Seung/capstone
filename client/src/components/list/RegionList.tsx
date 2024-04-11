@@ -18,6 +18,7 @@ const RegionList = (props: any) => {
   const onClickParentRegion = (regionName: string) => {
     setSelectParentRegion(regionName)
     setSelectChildRegions([])
+    setSelectAllChildRegions(false)
     axios
       .get(`/api/region/childregions?regionName=${regionName}`)
       .then((res: any) => {
@@ -202,7 +203,7 @@ const RegionList = (props: any) => {
           </Button>
         </Col>
       </Row>
-      <h1>{selectChildRegions}</h1>
+      {/* <h1>{selectChildRegions}</h1> */}
     </Container>
   )
 }

@@ -41,6 +41,8 @@ export class FestivalService {
   }
 
   async countAllFestival(countFestivalDto: countFestivalDto): Promise<Number> {
-    return await this.festivalRepository.countAllFestival(countFestivalDto);
+    const festivalCategory: Category[] =
+    await this.cateogryResository.getDescendantsCategory('A0207');
+    return await this.festivalRepository.countAllFestival(countFestivalDto, festivalCategory);
   }
 }
