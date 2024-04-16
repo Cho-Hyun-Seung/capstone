@@ -22,13 +22,17 @@ export class TouristSpotRepository extends Repository<TouristSpot> {
   ): Promise<TouristSpot[]> {
     const { regions, pageNum, pageSize, category_code } = getTouristSpotDto;
 
-    const regionConditions = regions.map((regionItem) => {
-      return { address1: Like(`%${regionItem}%`) };
-    });
+    // Check if regions is provided and not undefined
+    const regionConditions =
+      regions && regions.length > 0
+        ? regions.map((regionItem) => {
+            return { address1: Like(`%${regionItem}%`) };
+          })
+        : [];
 
     const touristSpots: TouristSpot[] = await this.touristSpotRepository
       .createQueryBuilder()
-      .where({ category_code: In([...category_code]) })
+      // .where({ category_code: In([...category_code]) })
       .andWhere(regionConditions)
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)

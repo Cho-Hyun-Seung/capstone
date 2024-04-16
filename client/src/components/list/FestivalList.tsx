@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import RegionList from './RegionList'
 import { Col, Container, Row } from 'react-bootstrap'
 import dayjs from 'dayjs'
-import '../../css/FestivalList.css'
+import '../../css/ListPage.css'
 import Pagenation from './Pagenation'
 interface IFestival {
   address1: string
@@ -104,7 +104,7 @@ const FestivalList = () => {
         <Row xs={1} md={3} className='g-4'>
           {festivals.map((festival) => (
             <Col key={festival.festival_id}>
-              <div className='festival-box'>
+              <div className='listpage-box'>
                 <img
                   src={festival.first_image}
                   alt={festival.title}
@@ -115,7 +115,7 @@ const FestivalList = () => {
                   {festival.event_start_date.split('T')[0]} ~{' '}
                   {festival.event_end_date.split('T')[0]}
                 </a>
-                <a className='festival-address'>
+                <a className='listpage-address'>
                   {festival.address1.split(' ').slice(0, 2).join(' ')}
                 </a>
               </div>

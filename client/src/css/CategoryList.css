@@ -1,0 +1,46 @@
+.category-scroll {
+  max-height: 200px; /* 높이 제한 */
+  max-width: 600px;
+  min-width: 300px;
+  overflow-y: auto; /* 세로 스크롤 활성화 */
+}
+
+.category-list {
+  margin-bottom: 30px;
+  display: flex; /* 요소를 가로로 나열하기 위해 flex 사용 */
+  justify-content: center; /* 요소를 가로로 중앙 정렬 */
+}
+
+/* 스크롤바의 바디 */
+.category-scroll::-webkit-scrollbar {
+  width: 10px; /* 스크롤바의 너비 */
+}
+
+/* 스크롤바의 추적부(스크롤바의 배경) */
+.category-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 스크롤바 추적부 배경색 */
+  border-radius: 5px; /* 스크롤바 슬라이더의 모서리 반경 */
+}
+
+/* 스크롤바의 슬라이더(스크롤바의 실제 바) */
+.category-scroll::-webkit-scrollbar-thumb {
+  background: #3a9bfd; /* 스크롤바 슬라이더 색상 */
+  border-radius: 5px; /* 스크롤바 슬라이더의 모서리 반경 */
+}
+
+.category-scroll::-webkit-scrollbar-thumb:hover {
+  background: #2970b7;
+}
+
+.category-element {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.category-element:hover {
+  background-color: #f0f0f0; /* 호버 시 배경색 변경 */
+}
+
+.category-element:active {
+  background-color: #ddd; /* 클릭 시 배경색 변경 */
+}

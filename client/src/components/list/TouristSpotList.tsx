@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import RegionList from './RegionList'
 import { Col, Row } from 'react-bootstrap'
 import Pagenation from './Pagenation'
+import CategoryList from './CategoryList'
+import '../../css/ListPage.css'
 
 interface ITouristSpot {
   tourist_spot_id: number
@@ -30,7 +32,7 @@ interface ITouristSpot {
 const TouristSpotList = () => {
   const [touristSpots, setTouristSpots] = useState<ITouristSpot[]>([])
   const [childRegions, setChildRegions] = useState<String[]>([])
-  const [category, setCategory] = useState()
+  const [category, setCategory] = useState('')
   const [maxPage, setMaxPage] = useState<number>(1)
   const [page, setPage] = useState<number>(1)
 
@@ -46,8 +48,8 @@ const TouristSpotList = () => {
       })
       setTouristSpots(response.data)
     } catch (error) {
-      console.error('축제 가져오기 오류:', error)
-      throw new Error('축제를 가져오는 중 오류가 발생했습니다.')
+      console.error('관광지 가져오기 오류:', error)
+      throw new Error('관광지를 가져오는 중 오류가 발생했습니다.')
     }
   }
 
@@ -78,6 +80,7 @@ const TouristSpotList = () => {
 
   return (
     <div>
+      <CategoryList />
       <RegionList
         getChildRegions={getChildRegions}
         onClickButton={onClickButton}
@@ -85,14 +88,14 @@ const TouristSpotList = () => {
       <Row xs={1} md={3} className='g-4'>
         {touristSpots.map((touristSpot) => (
           <Col key={touristSpot.tourist_spot_id}>
-            <div className='touristSpot-box'>
+            <div className='listpage-box'>
               <img
                 src={touristSpot.first_image}
                 alt={touristSpot.title}
                 className='img-fluid'
               />
               <h5>{touristSpot.title}</h5>
-              <a className='touristSpot-address'>
+              <a className='listpage-address'>
                 {touristSpot.address1.split(' ').slice(0, 2).join(' ')}
               </a>
             </div>

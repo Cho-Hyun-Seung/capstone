@@ -85,10 +85,6 @@ export class FestivalRepository extends Repository<Festival> {
   ): Promise<Festival[]> {
     const { pageNum, pageSize, regions, endDate, startDate } = getFestivalDto;
     // 오늘 날짜를 계산함
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = ('0' + (date.getMonth() + 1)).slice(-2);
-    const day = ('0' + date.getDate()).slice(-2);
     // 축제 정보를 가져오는 쿼리
     //  1. 제목, 시작일, 종료일, 위치를 가져옴
     //  2. 종료일이 오늘보다 큰 경우만 가져옴

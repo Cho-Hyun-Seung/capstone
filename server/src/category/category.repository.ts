@@ -82,16 +82,22 @@ export class CategoryRepository extends Repository<Category> {
 
   async getDescendantsCategory(parentCode: string): Promise<Category[]> {
     const parentCategory = await this.getCategoryByCode(parentCode);
-    const descendatsCategory = await this.categoryRepository.manager
+    const descendatsCategory: Category[] = await this.categoryRepository.manager
       .getTreeRepository(Category)
-      .findDescendants(parentCategory);
+      .findDescendantsTree(parentCategory, { depth: 2 })
+      .then((v) => v.children);
+
+    // console.log(descendatsCategory[0].children);
+
+    //.getTreeRepository(Category)
+    // .findDescendantsTree(parentCategory);
 
     // 자손 카테고리 배열에서 루트 카테고리의 인덱스 값
-    const index = descendatsCategory.findIndex(
-      (category) => category.category_code === parentCategory.category_code,
-    );
+    // const index = descendatsCategory.findIndex(
+    //   (category) => category.category_code === parentCategory.category_code,
+    // );
     // 부모 카테고리를 제거하고 리턴함
-    descendatsCategory.splice(index, 1);
+    // descendatsCategory.splice(index, 1);
     return descendatsCategory;
   }
 }

@@ -9,6 +9,7 @@ import MainNavbar from './components/MainNavbar'
 import Festival from './pages/Festival'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import TouristSpot from './pages/TouristSpot'
 
 function App() {
   const isRoot = location.pathname === '/'
@@ -26,7 +27,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/festival' element={<Festival />} />
-        <Route path='/counter' element={<Counter />} />
+        <Route path='/touristspot' element={<TouristSpot />} />
         <Route path='/input' element={<Input />} />
         <Route path='/input2' element={<Input2 />} />
         <Route path='/list' element={<List />} />
