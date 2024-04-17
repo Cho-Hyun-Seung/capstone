@@ -1,10 +1,21 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Button, Col, Container, Dropdown, Row } from 'react-bootstrap'
+import {
+  Button,
+  Col,
+  Collapse,
+  Container,
+  Dropdown,
+  Row,
+} from 'react-bootstrap'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
+import { Location, useLocation } from 'react-router-dom'
+import CategoryList from './CategoryList'
+import { FaAngleDown } from 'react-icons/fa'
+import '../../css/RegionList.css'
 
 const RegionList = (props: any) => {
   const [regions, setRegions] = useState<string[]>([])
@@ -14,7 +25,12 @@ const RegionList = (props: any) => {
   const [childMenuOpen, setChildMenuOpen] = useState<boolean>(false)
   const [selectAllChildRegions, setSelectAllChildRegions] =
     useState<boolean>(false)
+  const location: Location = useLocation()
+  const [isCategoryListOpen, setCategoryListOpen] = useState(false)
 
+  const onClickCategoryButton = () => {
+    setCategoryListOpen(!isCategoryListOpen)
+  }
   const onClickParentRegion = (regionName: string) => {
     setSelectParentRegion(regionName)
     setSelectChildRegions([])
@@ -68,6 +84,7 @@ const RegionList = (props: any) => {
       }
     }
     fetchData()
+    console.log('location', location)
   }, [])
 
   useEffect(() => {
@@ -79,7 +96,10 @@ const RegionList = (props: any) => {
       <Row style={{ marginBottom: '10px' }}>
         <Col xs={3}>시/도 선택</Col>
         <Col xs={3}>시/군/구 선택</Col>
-        <Col xs={4}>시기</Col>
+        {location.pathname.includes('festival') && <Col xs={4}>시기</Col>}
+        {location.pathname.includes('touristspot') && (
+          <Col xs={4}>카테고리</Col>
+        )}
       </Row>
       <Row>
         <Col xs={3}>
@@ -90,7 +110,10 @@ const RegionList = (props: any) => {
               className='dropdown-toggle'
               style={{ minWidth: '168px', minHeight: '56px' }}
             >
-              {selectParentRegion === '' ? '시/도 선택' : selectParentRegion}
+              {selectParentRegion === ''
+                ? '시/도 선택 '
+                : selectParentRegion + ' '}{' '}
+              <FaAngleDown />
             </Dropdown.Toggle>
             <Dropdown.Menu
               className='dropdown-menu'
@@ -129,14 +152,15 @@ const RegionList = (props: any) => {
               }}
             >
               {selectChildRegions.length === 0
-                ? '시/군/구 선택'
+                ? '시/군/구 선택 '
                 : selectChildRegions.length === childRegions.length
-                ? '전체선택'
+                ? '전체선택 '
                 : selectChildRegions.length === 1
-                ? selectChildRegions[0].split(' ')[1]
+                ? selectChildRegions[0].split(' ')[1] + ' '
                 : `${selectChildRegions[0].split(' ')[1]} 등 ${
                     selectChildRegions.length
-                  }개`}
+                  }개 `}
+              <FaAngleDown />
             </Dropdown.Toggle>
             <Dropdown.Menu
               style={{
@@ -172,28 +196,45 @@ const RegionList = (props: any) => {
             </Dropdown.Menu>
           </Dropdown>
         </Col>
-        <Col xs={4}>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                onChange={(v) => props.getStartDate(v!.format('YYYY-MM-DD'))}
-                format='YYYY-MM-DD'
-                label='시작일'
-                defaultValue={dayjs()}
-                sx={{ height: '3px', maxWidth: '200px' }}
-              />
-            </LocalizationProvider>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label='종료일'
-                onChange={(v) => props.getEndDate(v!.format('YYYY-MM-DD'))}
-                format='YYYY-MM-DD'
-                defaultValue={dayjs().add(1, 'year')}
-                sx={{ height: '3px', maxWidth: '200px' }}
-              />
-            </LocalizationProvider>
-          </div>
-        </Col>
+        {location.pathname.includes('festival') && (
+          <Col xs={4}>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  onChange={(v) => props.getStartDate(v!.format('YYYY-MM-DD'))}
+                  format='YYYY-MM-DD'
+                  label='시작일'
+                  defaultValue={dayjs()}
+                  sx={{ height: '3px', maxWidth: '200px' }}
+                />
+              </LocalizationProvider>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label='종료일'
+                  onChange={(v) => props.getEndDate(v!.format('YYYY-MM-DD'))}
+                  format='YYYY-MM-DD'
+                  defaultValue={dayjs().add(1, 'year')}
+                  sx={{ height: '3px', maxWidth: '200px' }}
+                />
+              </LocalizationProvider>
+            </div>
+          </Col>
+        )}
+        {location.pathname.includes('touristspot') && (
+          <Col xs={4}>
+            <Button
+              onClick={onClickCategoryButton}
+              style={{
+                minWidth: '168px',
+                minHeight: '56px',
+                backgroundColor: '#198754',
+                borderColor: '#198754',
+              }}
+            >
+              카테고리 선택 <FaAngleDown />
+            </Button>
+          </Col>
+        )}
         <Col xs={2}>
           <Button
             onClick={props.onClickButton}
@@ -203,6 +244,11 @@ const RegionList = (props: any) => {
           </Button>
         </Col>
       </Row>
+      <Collapse in={isCategoryListOpen}>
+        <div>
+          <CategoryList getCategoryArray={props.getCategoryArray} />
+        </div>
+      </Collapse>
       {/* <h1>{selectChildRegions}</h1> */}
     </Container>
   )

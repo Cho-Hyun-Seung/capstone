@@ -1,1 +1,0 @@
-const Category = (props: any) => {}

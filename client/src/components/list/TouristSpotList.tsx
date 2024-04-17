@@ -1,9 +1,8 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import RegionList from './RegionList'
-import { Col, Row } from 'react-bootstrap'
+import { Col, Container, Row } from 'react-bootstrap'
 import Pagenation from './Pagenation'
-import CategoryList from './CategoryList'
 import '../../css/ListPage.css'
 
 interface ITouristSpot {
@@ -29,10 +28,16 @@ interface ITouristSpot {
   overview?: string
 }
 
+interface Category {
+  category_code: string
+  category_name: string
+  children: Category[]
+}
+
 const TouristSpotList = () => {
   const [touristSpots, setTouristSpots] = useState<ITouristSpot[]>([])
   const [childRegions, setChildRegions] = useState<String[]>([])
-  const [category, setCategory] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState<string[]>([])
   const [maxPage, setMaxPage] = useState<number>(1)
   const [page, setPage] = useState<number>(1)
 
@@ -43,7 +48,7 @@ const TouristSpotList = () => {
           pageNum: page,
           pageSize: 21,
           regions: childRegions,
-          category_code: category,
+          category_code: selectedCategory,
         },
       })
       setTouristSpots(response.data)
@@ -58,11 +63,18 @@ const TouristSpotList = () => {
     console.log(regions)
   }
 
+  const getCategoryArray = (categories: Category[]) => {
+    const setData = categories.map((v: Category) => {
+      return v.category_code
+    })
+    setSelectedCategory([...setData])
+  }
+
   const getMaxPage = async () => {
     const response = await axios.get(`/api/touristspot/count`, {
       params: {
         regions: childRegions,
-        category_code: category,
+        category_code: selectedCategory,
       },
     })
     setMaxPage(Math.ceil(response.data / 21))
@@ -79,11 +91,11 @@ const TouristSpotList = () => {
   }, [page])
 
   return (
-    <div>
-      <CategoryList />
+    <Container>
       <RegionList
         getChildRegions={getChildRegions}
         onClickButton={onClickButton}
+        getCategoryArray={getCategoryArray}
       />
       <Row xs={1} md={3} className='g-4'>
         {touristSpots.map((touristSpot) => (
@@ -91,7 +103,7 @@ const TouristSpotList = () => {
             <div className='listpage-box'>
               <img
                 src={touristSpot.first_image}
-                alt={touristSpot.title}
+                // alt={touristSpot.title}
                 className='img-fluid'
               />
               <h5>{touristSpot.title}</h5>
@@ -103,7 +115,7 @@ const TouristSpotList = () => {
         ))}
       </Row>
       <Pagenation page={page} setPage={setPage} maxPage={maxPage} />
-    </div>
+    </Container>
   )
 }
 

@@ -28,8 +28,9 @@ export class getTouristSpotDto {
 export class countTouristSpotDto {
   @IsOptional()
   @IsArray()
-  regions: string[] = [];
+  regions: string[] = [''];
 
-  @IsDate()
-  category: string[] = [];
+  @IsOptional()
+  @IsArray()
+  category_code: string[] = [''];
 }
