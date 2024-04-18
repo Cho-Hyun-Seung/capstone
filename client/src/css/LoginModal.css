@@ -1,0 +1,28 @@
+/* LoginModal.css */
+
+.modalContainer {
+  position: relative; /* X 아이콘이 상대적으로 위치할 수 있도록 */
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.closeIcon {
+  position: absolute;
+  top: -3px; /* 조정된 위치 */
+  right: 8px; /* 조정된 위치 */
+  font-size: 30px;
+  cursor: pointer;
+  padding: 3px; /* 상하좌우 패딩 동일하게 조정 */
+}
+
+/* 모달에 적용되는 스타일 */
+.MuiModal-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.MuiModal-container {
+  outline: none; /* 모달이 열렸을 때 포커스 표시 제거 */
+}

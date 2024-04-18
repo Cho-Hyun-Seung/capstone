@@ -39,11 +39,7 @@ const CategoryList = ({ getCategoryArray }: { getCategoryArray: any }) => {
   const [level2, setLevel2] = useState<Category[]>([])
   const [level3, setLevel3] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState<Category[]>([])
-  // 현재 선택된 카테고리 state값 추가하기!
 
-  // 전체 선택 기능 --> 재사용성?
-
-  // 루트 카테고리 가져오기
   const getRootCategory = async () => {
     const response: AxiosResponse = await axios.get('/api/category/root')
     setLevel1(response.data)
@@ -66,8 +62,6 @@ const CategoryList = ({ getCategoryArray }: { getCategoryArray: any }) => {
       const response: AxiosResponse = await axios.get(
         `/api/category/getdescendants/${category.category_code}`
       )
-      // API 호출 성공 시, 원하는 작업 수행
-      console.log(response.data) // API 응답 데이터 확인
       if (level1.includes(category)) {
         setLevel2(response.data)
         setLevel3([])
@@ -84,7 +78,6 @@ const CategoryList = ({ getCategoryArray }: { getCategoryArray: any }) => {
         setCategoryFunction(category)
       }
     } catch (error) {
-      // API 호출 실패 시, 에러 처리
       console.error('Error fetching descendants:', error)
     }
   }

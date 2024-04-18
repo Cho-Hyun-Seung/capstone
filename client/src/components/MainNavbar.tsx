@@ -5,7 +5,7 @@ import LoginModal from './auth/LoginModal'
 
 const MainNavbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
-  const [modalOpen, setModalOpen] = useState<boolean>(false)
+  const [openModal, setOpenModal] = useState<boolean>(false)
 
   const handleMouseEnter = () => {
     setDropdownOpen(true)
@@ -15,14 +15,14 @@ const MainNavbar = () => {
     setDropdownOpen(false)
   }
 
-  const handleModalOpen = () => {
-    setModalOpen(true)
-    return modalOpen
+  const handleOpenModal = () => {
+    setOpenModal(true)
+    return openModal
   }
 
-  const handleModalClose = () => {
-    setModalOpen(false)
-    return modalOpen
+  const handleCloseModal = () => {
+    setOpenModal(false)
+    return openModal
   }
 
   return (
@@ -50,10 +50,10 @@ const MainNavbar = () => {
             </NavDropdown>
             <Nav.Link href='/planner'>여행 플래너</Nav.Link>
             {/* <Nav.Link href='/review'>후기</Nav.Link> */}
-            <Nav.Link onClick={handleModalOpen}>로그인</Nav.Link>
+            <Nav.Link onClick={handleOpenModal}>로그인</Nav.Link>
             <LoginModal
-              modalOpen={modalOpen}
-              handleModalClose={handleModalClose}
+              openModal={openModal}
+              handleCloseModal={handleCloseModal}
             />
           </Nav>
         </Container>
