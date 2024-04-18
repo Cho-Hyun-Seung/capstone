@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap'
+import { Navbar, Nav, Container, NavDropdown, Button } from 'react-bootstrap'
 import '../css/Navbar.css'
+import LoginModal from './auth/LoginModal'
 
 const MainNavbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [modalOpen, setModalOpen] = useState<boolean>(false)
 
   const handleMouseEnter = () => {
     setDropdownOpen(true)
@@ -11,6 +13,16 @@ const MainNavbar = () => {
 
   const handleMouseLeave = () => {
     setDropdownOpen(false)
+  }
+
+  const handleModalOpen = () => {
+    setModalOpen(true)
+    return modalOpen
+  }
+
+  const handleModalClose = () => {
+    setModalOpen(false)
+    return modalOpen
   }
 
   return (
@@ -38,7 +50,11 @@ const MainNavbar = () => {
             </NavDropdown>
             <Nav.Link href='/planner'>여행 플래너</Nav.Link>
             {/* <Nav.Link href='/review'>후기</Nav.Link> */}
-            <Nav.Link href='/login'>로그인</Nav.Link>
+            <Nav.Link onClick={handleModalOpen}>로그인</Nav.Link>
+            <LoginModal
+              modalOpen={modalOpen}
+              handleModalClose={handleModalClose}
+            />
           </Nav>
         </Container>
       </Navbar>

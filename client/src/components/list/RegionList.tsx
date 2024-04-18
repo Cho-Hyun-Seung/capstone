@@ -244,11 +244,13 @@ const RegionList = (props: any) => {
           </Button>
         </Col>
       </Row>
-      <Collapse in={isCategoryListOpen}>
-        <div>
-          <CategoryList getCategoryArray={props.getCategoryArray} />
-        </div>
-      </Collapse>
+      {location.pathname.includes('touristspot') && (
+        <Collapse in={isCategoryListOpen}>
+          <div>
+            <CategoryList getCategoryArray={props.getCategoryArray} />
+          </div>
+        </Collapse>
+      )}
       {/* <h1>{selectChildRegions}</h1> */}
     </Container>
   )
