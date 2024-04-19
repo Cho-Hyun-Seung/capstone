@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Modal } from '@mui/material'
+import { Button, Modal } from '@mui/material'
 import { FaTimes } from 'react-icons/fa'
 import '../../css/LoginModal.css'
+import { Form } from 'react-bootstrap'
 
 const LoginModal = ({
   openModal,
@@ -41,30 +42,27 @@ const LoginModal = ({
         <div className='closeIcon' onClick={closeModal}>
           <FaTimes />
         </div>
-        <h2>로그인</h2>
-        <form>
-          <div>
-            <label htmlFor='username'>아이디:</label>
-            <input
-              id='username'
-              type='text'
-              value={inputId}
-              onChange={(e) => setInputId(e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor='password'>비밀번호:</label>
-            <input
-              id='password'
-              type='password'
-              value={inputPassword}
-              onChange={(e) => setInputPassword(e.target.value)}
-            />
-          </div>
-          <button type='button' onClick={handleLogin}>
+        <p className='login-text'>로그인</p>
+        <Form>
+          <Form.Group className='input-id' controlId='id'>
+            <Form.Control type='id' placeholder='아이디' />
+          </Form.Group>
+
+          <Form.Group className='input-password' controlId='password'>
+            <Form.Control type='password' placeholder='비밀번호' />
+          </Form.Group>
+          <p className='find-user'>아이디/비밀번호 찾기</p>
+          <Button className='login-button' type='submit'>
             로그인
-          </button>
-        </form>
+          </Button>
+          <Button className='kakao-login-button' type='submit'>
+            카카오로 로그인
+          </Button>
+          <p className='sign-in'>
+            <span style={{ color: '#949494' }}>회원이 아니신가요? </span>
+            <span className='sign-in-button'>회원가입</span>
+          </p>
+        </Form>
       </div>
     </Modal>
   )

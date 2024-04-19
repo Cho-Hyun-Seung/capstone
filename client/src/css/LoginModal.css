@@ -1,17 +1,23 @@
-/* LoginModal.css */
+@font-face {
+  font-family: 'gmarketSansMedium';
+  src: url('../assets/fonts/GmarketSansTTFMedium.ttf');
+}
 
 .modalContainer {
   position: relative; /* X 아이콘이 상대적으로 위치할 수 있도록 */
   background: #fff;
   padding: 20px;
   border-radius: 8px;
+  width: 450px;
+  height: 450px;
+  outline: none; /* 모달이 열렸을 때 포커스 표시 제거 */
 }
 
 .closeIcon {
   position: absolute;
   top: -3px; /* 조정된 위치 */
   right: 8px; /* 조정된 위치 */
-  font-size: 30px;
+  font-size: 20px;
   cursor: pointer;
   padding: 3px; /* 상하좌우 패딩 동일하게 조정 */
 }
@@ -25,4 +31,72 @@
 
 .MuiModal-container {
   outline: none; /* 모달이 열렸을 때 포커스 표시 제거 */
+}
+
+.login-text {
+  text-align: center;
+  font-size: 1.5em;
+  margin-bottom: 60px;
+}
+
+.input-id {
+  margin-bottom: 10px;
+}
+
+.input-password {
+  margin-bottom: 10px;
+}
+
+.find-user {
+  font-size: 0.9em;
+  margin-bottom: 30px;
+  text-align: right;
+  color: #949494;
+}
+
+.find-user:hover {
+  color: rgb(0, 0, 0);
+}
+
+/* 로그인 버튼 스타일 */
+.login-button,
+.kakao-login-button {
+  width: 100%;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'gmarketSansMedium' !important;
+}
+
+.login-button {
+  width: 100%;
+  background-color: rgb(0, 0, 0) !important;
+  border: none;
+  color: rgb(255, 255, 255) !important;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 30px;
+  cursor: pointer;
+  font-family: 'gmarketSansMedium';
+}
+
+.login-button {
+  background-color: rgb(0, 0, 0) !important;
+  color: rgb(255, 255, 255) !important;
+  margin-bottom: 15px !important; /* 마진 적용 */
+}
+
+/* 카카오로 로그인 버튼 스타일 */
+.kakao-login-button {
+  background-color: #ffeb00 !important;
+  color: black !important;
+  margin-bottom: 30px !important;
+}
+
+.sign-in {
+  text-align: center;
+}
+.sign-in-button {
+  text-decoration: underline;
 }
