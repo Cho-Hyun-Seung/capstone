@@ -18,12 +18,12 @@ export class AuthService {
   ) {}
 
   async signUp(authCredentialDto: AuthCredentialDto): Promise<void> {
-    return this.userRepository.createUser(authCredentialDto);
+    return await this.userRepository.createUser(authCredentialDto);
   }
 
   async signIn(
     authCredentialDto: AuthCredentialDto,
   ): Promise<{ accessToken: string }> {
-    return this.userRepository.loginUser(authCredentialDto);
+    return await this.userRepository.loginUser(authCredentialDto);
   }
 }

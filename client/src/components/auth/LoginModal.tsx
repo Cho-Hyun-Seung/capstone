@@ -3,6 +3,7 @@ import { Button, Modal } from '@mui/material'
 import { FaTimes } from 'react-icons/fa'
 import '../../css/LoginModal.css'
 import { Form } from 'react-bootstrap'
+import axios from 'axios'
 
 const LoginModal = ({
   openModal,
@@ -18,12 +19,22 @@ const LoginModal = ({
     handleCloseModal()
   }
 
-  const handleLogin = () => {
-    // 로그인 처리 로직을 구현하세요
-    // 예를 들어, 입력된 아이디와 비밀번호를 서버로 전송하여 인증을 수행할 수 있습니다.
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    try {
+      const response = await axios.post('/api/auth/signin', {
+        username: inputId,
+        password: inputPassword,
+      })
+
+      // 로그인 성공 시 받은 토큰을 저장
+
+      console.log(response)
+    } catch (error) {
+      alert(error)
+    }
     console.log('ID:', inputId)
     console.log('Password:', inputPassword)
-    // 여기에 실제로 서버로 요청을 보내는 코드를 작성하세요
   }
 
   return (
@@ -43,24 +54,35 @@ const LoginModal = ({
           <FaTimes />
         </div>
         <p className='login-text'>로그인</p>
-        <Form>
+        <Form onSubmit={handleLogin}>
           <Form.Group className='input-id' controlId='id'>
-            <Form.Control type='id' placeholder='아이디' />
+            <Form.Control
+              type='text'
+              placeholder='아이디'
+              value={inputId}
+              onChange={(e) => setInputId(e.target.value)}
+            />
           </Form.Group>
 
           <Form.Group className='input-password' controlId='password'>
-            <Form.Control type='password' placeholder='비밀번호' />
+            <Form.Control
+              type='password'
+              placeholder='비밀번호'
+              value={inputPassword}
+              onChange={(e) => setInputPassword(e.target.value)}
+            />
           </Form.Group>
+
           <p className='find-user'>아이디/비밀번호 찾기</p>
           <Button className='login-button' type='submit'>
             로그인
           </Button>
-          <Button className='kakao-login-button' type='submit'>
+          <Button className='kakao-login-button' onClick={closeModal}>
             카카오로 로그인
           </Button>
           <p className='sign-in'>
             <span style={{ color: '#949494' }}>회원이 아니신가요? </span>
-            <span className='sign-in-button'>회원가입</span>
+            <a className='sign-in-button'>회원가입</a>
           </p>
         </Form>
       </div>

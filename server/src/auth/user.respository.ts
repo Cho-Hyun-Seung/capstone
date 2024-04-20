@@ -55,7 +55,7 @@ export class UserRepository extends Repository<User> {
       // 유저 토큰 생성 (secret + payload)
       // 페이로드에는 중요한 정보가 들어가면 안됨
       const payload = { username };
-      const accessToken: string = await this.jwtService.sign(payload);
+      const accessToken: string = await this.jwtService.signAsync(payload);
       return { accessToken };
     } else {
       throw new UnauthorizedException('로그인 실패');
