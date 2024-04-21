@@ -1,6 +1,6 @@
 import { IsEmail, IsString, Length, Matches } from 'class-validator';
 
-export class AuthCredentialDto {
+export class UserDto {
   @IsString()
   @Length(8, 20)
   user_id: string;
@@ -21,18 +21,5 @@ export class AuthCredentialDto {
   // @Matches(/(?=.*[!@#$%^&*()-_=+\\|/,.?~])/, {
   //   message: '특수문자를 최소 1개 이상 포함해야 합니다.',
   // })
-  password: string;
-}
-
-export class LoginDto {
-  @IsString()
-  @Length(8, 20)
-  user_id: string;
-
-  @IsString()
-  @Length(8, 30)
-  @Matches(/^[^<>'";]{4,}(?<![a-zA-Z0-9])[^<>'";]*$/, {
-    message: '유효하지 않은 비밀번호입니다.',
-  })
   password: string;
 }

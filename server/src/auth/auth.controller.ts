@@ -1,40 +1,42 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Req,
-  UseGuards,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { RefreshJwtGuard } from './guards/refresh-jwt-auth.guard';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from './decorator/get-user.decorator';
-import { User } from './user.entity';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
-  @Post('/signup')
-  signUp(
-    @Body(ValidationPipe) authCredentialDto: AuthCredentialDto,
-  ): Promise<void> {
-    return this.authService.signUp(authCredentialDto);
+  @UseGuards(LocalAuthGuard)
+  @Post('login')
+  async login(@Req() req, @Res() res: Response): Promise<any> {
+    const { accessToken, refreshToken } = await this.authService.login(
+      req.user,
+    );
+    res.setHeader('Authorization', 'Bearer ' + accessToken); // 토큰 설정
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+    });
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+    });
+    return res.send({
+      message: '로그인 성공',
+      // accessToken: accessToken,
+      // refreshToken: refreshToken,
+    });
   }
 
-  @Post('/signin')
-  signin(
-    @Body(ValidationPipe) authCredentialDto: AuthCredentialDto,
-  ): Promise<{ accessToken: string }> {
-    return this.authService.signIn(authCredentialDto);
+  @Post('register')
+  async registerUser(@Body() authCredentialDto: AuthCredentialDto) {
+    return await this.authService.signUp(authCredentialDto);
   }
 
-  @Post('/test')
-  // UseGuards는 nestjs에서 제공하는 인증 미들웨어
-  @UseGuards(AuthGuard())
-  test(@GetUser() user: User) {
-    console.log('req', user);
+  @UseGuards(RefreshJwtGuard)
+  @Post('refresh')
+  async refrshToken(@Req() req) {
+    return await this.authService.refreshToken(req.user);
   }
 }
