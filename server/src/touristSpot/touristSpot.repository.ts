@@ -88,7 +88,7 @@ export class TouristSpotRepository extends Repository<TouristSpot> {
   }
 
   // 요소
-  // 1. 숙소 좌표
+  // 1. 좌표
   // 2. 선택한 카테고리
   // 3. 직선 거리
   async getByCoord(getByCoordDto: getByCoordDto): Promise<TouristSpot[]> {
