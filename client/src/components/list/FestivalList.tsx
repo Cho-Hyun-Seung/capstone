@@ -54,6 +54,7 @@ const FestivalList = () => {
       setFestivals(response.data)
     } catch (error) {
       console.error('축제 가져오기 오류:', error)
+      //! 결과 값이 0인 경우 오류가 존재함!!
       throw new Error('축제를 가져오는 중 오류가 발생했습니다.')
     }
   }

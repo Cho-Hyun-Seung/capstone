@@ -8,6 +8,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RegionModule } from './region/region.module';
 import { TouristSpotModule } from './touristSpot/touristSpot.module';
 import { AuthModule } from './auth/auth.module';
+import { PlannerController } from './planner/planner.controller';
+import { PlannerModule } from './planner/planner.module';
 @Module({
   imports: [
     FestivalModule,
@@ -26,8 +28,9 @@ import { AuthModule } from './auth/auth.module';
       isGlobal: true,
       ignoreEnvFile: false,
     }),
+    PlannerModule,
   ],
-  controllers: [],
+  controllers: [PlannerController],
   providers: [],
 })
 export class AppModule {}

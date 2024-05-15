@@ -22,8 +22,8 @@ const LoginModal = ({
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      const response = await axios.post('/api/auth/signin', {
-        username: inputId,
+      const response = await axios.post('/api/auth/login', {
+        user_id: inputId,
         password: inputPassword,
       })
 

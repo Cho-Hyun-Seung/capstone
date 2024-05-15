@@ -17,15 +17,19 @@ export class AuthController {
     );
     res.setHeader('Authorization', 'Bearer ' + accessToken); // 토큰 설정
     res.cookie('accessToken', accessToken, {
+      sameSite: 'strict',
+      secure: true,
       httpOnly: true,
     });
     res.cookie('refreshToken', refreshToken, {
+      sameSite: 'strict',
+      secure: true,
       httpOnly: true,
     });
     return res.send({
       message: '로그인 성공',
-      // accessToken: accessToken,
-      // refreshToken: refreshToken,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     });
   }
 
