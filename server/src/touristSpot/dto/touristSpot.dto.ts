@@ -34,3 +34,20 @@ export class countTouristSpotDto {
   @IsArray()
   category_code: string[] = [''];
 }
+
+export class getByCoordDto {
+  @IsArray()
+  category_code: string[] = [];
+
+  @IsNumber()
+  @IsNotEmpty()
+  lodgingX: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  lodgingY: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  distance: number;
+}

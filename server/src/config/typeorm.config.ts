@@ -27,6 +27,7 @@ export const typeORMConfig = (
     entities: [__dirname + '/../**/*.entity.{js,ts}'],
     synchronize: true,
     timezone: '+09:00',
+    logging: true,
   };
   return options;
 };

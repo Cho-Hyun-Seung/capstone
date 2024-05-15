@@ -1,8 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, In, LessThan, Like, MoreThan, Repository } from 'typeorm';
+import {
+  And,
+  DataSource,
+  In,
+  LessThan,
+  LessThanOrEqual,
+  Like,
+  MoreThan,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TouristSpot } from './touristSpot.entity';
-import { countTouristSpotDto, getTouristSpotDto } from './dto/touristSpot.dto';
+import {
+  countTouristSpotDto,
+  getTouristSpotDto,
+  getByCoordDto,
+} from './dto/touristSpot.dto';
 
 @Injectable()
 export class TouristSpotRepository extends Repository<TouristSpot> {
@@ -71,5 +85,72 @@ export class TouristSpotRepository extends Repository<TouristSpot> {
       .getCount();
     console.log('countFestival', countFestival);
     return countFestival;
+  }
+
+  // 요소
+  // 1. 숙소 좌표
+  // 2. 선택한 카테고리
+  // 3. 직선 거리
+  async getByCoord(getByCoordDto: getByCoordDto): Promise<TouristSpot[]> {
+    let { lodgingX, lodgingY, category_code, distance } = getByCoordDto;
+    lodgingX = +lodgingX;
+    lodgingY = +lodgingY;
+
+    const coordToRadian = (coord) => {
+      return (coord * Math.PI) / 180;
+    };
+
+    // 하버사인 공식 ==> 두 좌표 사이의 거리 구하기
+    // https://kayuse88.github.io/haversine/
+    const haversine = (
+      lat1: number,
+      lat2: number,
+      lng1: number,
+      lng2: number,
+    ): number => {
+      const lat1Rad = coordToRadian(lat1);
+      const lat2Rad = coordToRadian(lat2);
+      const lng1Rad = coordToRadian(lng1);
+      const lng2Rad = coordToRadian(lng2);
+
+      const deltaLat = lat2Rad - lat1Rad;
+      const deltaLng = lng2Rad - lng1Rad;
+
+      const sqrtNum =
+        Math.sin(deltaLat / 2) ** 2 +
+        Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(deltaLng / 2) ** 2;
+      const btwDistance = 2 * 6371 * Math.asin(Math.sqrt(sqrtNum));
+
+      console.log('거리', btwDistance);
+      return btwDistance;
+    };
+
+    // 위도(lat, y) 1° : 지구 반지름(6371) X 1° X 1라디안(파이/180) = 위도 1°당 거리
+    // => 111.1949
+    // 경도(lng, x) 1° : 지구 반지름(6371) X 1° X cos(라디안(위도 좌표)) = 경도 1° 당 거리
+    const lat = 0.008993 * distance;
+    const lng =
+      (((1 / 6371) * 180) / Math.PI / Math.cos(coordToRadian(lodgingY))) *
+      distance;
+
+    // 가져올 때 네모모양으로 n km 자르고 시작하기
+    // nx, ny가  + - n km인 사각형 안에 들어가는 요소들만 가져오기
+    const touristSpots = await this.touristSpotRepository.findBy({
+      nx: And(LessThanOrEqual(lodgingX + lng), MoreThanOrEqual(lodgingX - lng)),
+      ny: And(LessThanOrEqual(lodgingY + lat), MoreThanOrEqual(lodgingY - lat)),
+      // category_code: category_code
+    });
+
+    // 원 모양 내부에 존재하는 경우만
+    const aroundTouristSpots = touristSpots.filter((touristSpot) => {
+      if (
+        haversine(touristSpot.nx, lodgingX, touristSpot.ny, lodgingY) <=
+        distance
+      ) {
+        return touristSpot;
+      }
+    });
+    console.log(lng, lat, touristSpots.length, aroundTouristSpots.length);
+    return aroundTouristSpots;
   }
 }

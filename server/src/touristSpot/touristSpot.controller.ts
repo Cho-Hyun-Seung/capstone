@@ -9,7 +9,11 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { TouristSpotService } from './touristSpot.service';
-import { countTouristSpotDto, getTouristSpotDto } from './dto/touristSpot.dto';
+import {
+  countTouristSpotDto,
+  getByCoordDto,
+  getTouristSpotDto,
+} from './dto/touristSpot.dto';
 import { TouristSpot } from './touristSpot.entity';
 
 @Controller('touristspot')
@@ -28,5 +32,10 @@ export class TouristSpotController {
     @Query() countTouristSpotDto: countTouristSpotDto,
   ): Promise<number> {
     return this.touristSpotService.countAllTouristSpot(countTouristSpotDto);
+  }
+
+  @Get('/coord')
+  GetByCoord(@Query() getByCoordDto: getByCoordDto): Promise<TouristSpot[]> {
+    return this.touristSpotService.getByCoord(getByCoordDto);
   }
 }

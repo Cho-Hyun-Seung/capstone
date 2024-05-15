@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryRepository } from 'src/category/category.repository';
 import { TouristSpotRepository } from './touristSpot.repository';
-import { countTouristSpotDto, getTouristSpotDto } from './dto/touristSpot.dto';
+import {
+  countTouristSpotDto,
+  getTouristSpotDto,
+  getByCoordDto,
+} from './dto/touristSpot.dto';
 import { TouristSpot } from './touristSpot.entity';
 
 @Injectable()
@@ -24,5 +28,9 @@ export class TouristSpotService {
     return await this.touristSpotRepository.countAllTouristSpot(
       countTouristSpotDto,
     );
+  }
+
+  async getByCoord(getByCoordDto: getByCoordDto): Promise<TouristSpot[]> {
+    return await this.touristSpotRepository.getByCoord(getByCoordDto);
   }
 }

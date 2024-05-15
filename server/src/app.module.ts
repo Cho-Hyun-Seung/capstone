@@ -14,6 +14,7 @@ import { PlannerModule } from './planner/planner.module';
   imports: [
     FestivalModule,
     TouristSpotModule,
+    // PlannerModule,
     AuthModule,
     CategoryModule,
     RegionModule,
@@ -28,7 +29,6 @@ import { PlannerModule } from './planner/planner.module';
       isGlobal: true,
       ignoreEnvFile: false,
     }),
-    PlannerModule,
   ],
   controllers: [PlannerController],
   providers: [],
