@@ -35,7 +35,9 @@ export class TouristSpotController {
   }
 
   @Get('/coord')
-  GetByCoord(@Query() getByCoordDto: getByCoordDto): Promise<TouristSpot[]> {
+  GetByCoord(
+    @Query() getByCoordDto: getByCoordDto,
+  ): Promise<{ touristSpots: TouristSpot[]; distances: number[][] }> {
     return this.touristSpotService.getByCoord(getByCoordDto);
   }
 }

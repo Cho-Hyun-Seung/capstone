@@ -91,7 +91,15 @@ export class TouristSpotRepository extends Repository<TouristSpot> {
   // 1. 좌표
   // 2. 선택한 카테고리
   // 3. 직선 거리
-  async getByCoord(getByCoordDto: getByCoordDto): Promise<TouristSpot[]> {
+  // 기본 틀
+  // 관광지 하루에 2~3개
+  // 최소 1박 2일
+  // 최대 3박 4일
+  // 돌아오는 방식? TSP 알고리즘
+  // 3일인 경우 숙소 2개 선택가능?
+  async getByCoord(
+    getByCoordDto: getByCoordDto,
+  ): Promise<{ touristSpots: TouristSpot[]; distances: number[][] }> {
     let { lodgingX, lodgingY, category_code, distance } = getByCoordDto;
     lodgingX = +lodgingX;
     lodgingY = +lodgingY;
@@ -121,7 +129,6 @@ export class TouristSpotRepository extends Repository<TouristSpot> {
         Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(deltaLng / 2) ** 2;
       const btwDistance = 2 * 6371 * Math.asin(Math.sqrt(sqrtNum));
 
-      console.log('거리', btwDistance);
       return btwDistance;
     };
 
@@ -135,14 +142,14 @@ export class TouristSpotRepository extends Repository<TouristSpot> {
 
     // 가져올 때 네모모양으로 n km 자르고 시작하기
     // nx, ny가  + - n km인 사각형 안에 들어가는 요소들만 가져오기
-    const touristSpots = await this.touristSpotRepository.findBy({
+    let touristSpots = await this.touristSpotRepository.findBy({
       nx: And(LessThanOrEqual(lodgingX + lng), MoreThanOrEqual(lodgingX - lng)),
       ny: And(LessThanOrEqual(lodgingY + lat), MoreThanOrEqual(lodgingY - lat)),
       // category_code: category_code
     });
 
     // 원 모양 내부에 존재하는 경우만
-    const aroundTouristSpots = touristSpots.filter((touristSpot) => {
+    touristSpots = touristSpots.filter((touristSpot) => {
       if (
         haversine(touristSpot.nx, lodgingX, touristSpot.ny, lodgingY) <=
         distance
@@ -150,7 +157,20 @@ export class TouristSpotRepository extends Repository<TouristSpot> {
         return touristSpot;
       }
     });
-    console.log(lng, lat, touristSpots.length, aroundTouristSpots.length);
+
+    const distances = touristSpots.map((touristSpot) => {
+      // 하버사인 공식을 모두 적용하기 위해서
+      const cal_harversine = touristSpots.map((v) => {
+        return haversine(v.nx, touristSpot.nx, v.ny, touristSpot.ny);
+      });
+      return cal_harversine;
+    });
+
+    const aroundTouristSpots = {
+      touristSpots: touristSpots,
+      distances: distances,
+    };
+
     return aroundTouristSpots;
   }
 }
