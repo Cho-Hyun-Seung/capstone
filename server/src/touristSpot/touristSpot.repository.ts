@@ -100,7 +100,8 @@ export class TouristSpotRepository extends Repository<TouristSpot> {
   async getByCoord(
     getByCoordDto: getByCoordDto,
   ): Promise<{ touristSpots: TouristSpot[]; distances: number[][] }> {
-    let { lodgingX, lodgingY, category_code, distance } = getByCoordDto;
+    let { lodgingX, lodgingY, category_code, distance, festival } =
+      getByCoordDto;
     lodgingX = +lodgingX;
     lodgingY = +lodgingY;
 
@@ -142,10 +143,15 @@ export class TouristSpotRepository extends Repository<TouristSpot> {
 
     // 가져올 때 네모모양으로 n km 자르고 시작하기
     // nx, ny가  + - n km인 사각형 안에 들어가는 요소들만 가져오기
-    let touristSpots = await this.touristSpotRepository.findBy({
+    let touristSpots: any[] = await this.touristSpotRepository.findBy({
       nx: And(LessThanOrEqual(lodgingX + lng), MoreThanOrEqual(lodgingX - lng)),
       ny: And(LessThanOrEqual(lodgingY + lat), MoreThanOrEqual(lodgingY - lat)),
       // category_code: category_code
+    });
+    touristSpots.unshift({
+      title: '숙소',
+      nx: lodgingX,
+      ny: lodgingY,
     });
 
     // 원 모양 내부에 존재하는 경우만

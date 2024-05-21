@@ -5,8 +5,10 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  ValidateNested,
   isNumber,
 } from 'class-validator';
+import { Festival } from 'src/festival/festival.entity';
 
 export class getTouristSpotDto {
   @IsNumber()
@@ -50,4 +52,8 @@ export class getByCoordDto {
   @IsNumber()
   @IsNotEmpty()
   distance: number;
+
+  @IsOptional()
+  @ValidateNested()
+  festival?: Festival;
 }
