@@ -39,7 +39,7 @@ export class countTouristSpotDto {
 
 export class getByCoordDto {
   @IsArray()
-  category_code: string[] = [];
+  category_code: string = '';
 
   @IsNumber()
   @IsNotEmpty()

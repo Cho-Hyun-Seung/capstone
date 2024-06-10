@@ -29,10 +29,8 @@ export class TouristSpotService {
       countTouristSpotDto,
     );
   }
-
-  async getByCoord(
-    getByCoordDto: getByCoordDto,
-  ): Promise<{ touristSpots: TouristSpot[]; distances: number[][] }> {
+  // : Promise<{ touristSpots: TouristSpot[]; distances: number[][] }>
+  async getByCoord(getByCoordDto: getByCoordDto) {
     return await this.touristSpotRepository.getByCoord(getByCoordDto);
   }
 }
