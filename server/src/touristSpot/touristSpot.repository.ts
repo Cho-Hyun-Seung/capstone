@@ -99,6 +99,19 @@ export class TouristSpotRepository extends Repository<TouristSpot> {
   // 돌아오는 방식? TSP 알고리즘
   // 3일인 경우 숙소 2개 선택가능?
   async getByCoord(getByCoordDto: getByCoordDto, retries = 0) {
+    //! 여기서 update 할 경우 기존 touristSpots 값을 가져와서 사용하기
+    //! 거리 순으로 정렬된 값을 선호도 순으로 정렬하기
+    //! 리스트 페이지에서 즐겨찾기 추가하기
+    //----------- 해당 관광지의 즐겨찾기값이 DB에 존재하지 않는 경우 여기서 해결해주기 --------------
+    /*
+    {
+      'contentId': '2342432', // string
+      'zzim': 432 // number
+      '트렌드' => 네이버 데이터 랩에 1번 노드를 기준으로 period 값을 분석
+                => 분석된 period 값을 정형화하여 각 관광지에 trend: 52 형태로 저장함
+    }
+     */
+    //
     let { lodgingX, lodgingY, category_code, distance, festival } =
       getByCoordDto;
     const MAX_RETRIES = 3;
@@ -111,7 +124,7 @@ export class TouristSpotRepository extends Repository<TouristSpot> {
       .filter((code) => code.trim() !== '');
     console.log(category_code);
     const lodging = {
-      title: '숙소',
+      title: '시작점',
       mapx: lodgingX,
       mapy: lodgingY,
     };
@@ -252,8 +265,7 @@ export class TouristSpotRepository extends Repository<TouristSpot> {
       // 조합 생성하기
       combination(0, 3, []);
       const result = await createNonOverlappingPairs(resultArray);
-      // console.log(result);
-
+      console.log(result.length);
       return result;
 
       // 카테고리에 있는거 우선으로 넣고 아닌경우 추가로 넣기

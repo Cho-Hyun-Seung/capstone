@@ -118,7 +118,14 @@ export class PlannerService {
           return pick[1][v].title;
         })
         .join(' => ');
-      return { firstDayText, secondDayText, firstDayResult, secondDayResult };
+      const sumDistance = firstDayResult.length + secondDayResult.length;
+      return {
+        firstDayText,
+        secondDayText,
+        sumDistance,
+        firstDayResult,
+        secondDayResult,
+      };
     } catch (error) {
       console.error('Error in TSPAlgorithms:', error);
       throw error; // 예외를 다시 throw하여 호출자에게 전달
