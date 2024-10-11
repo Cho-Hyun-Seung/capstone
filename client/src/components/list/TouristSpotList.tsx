@@ -6,25 +6,25 @@ import Pagenation from './Pagenation'
 import '../../css/ListPage.css'
 
 interface ITouristSpot {
-  tourist_spot_id: number
-  category_code: string
-  title: string
   content_id: number
-  content_type_id: number
-  address1: string
-  address2?: string
-  booktour: boolean
-  culture_heritage: boolean
-  natural_heritage: boolean
-  memory_heritage: boolean
-  open_date?: string
-  rest_date?: string
-  age_limit?: string
+  category_code?: string
+  title: string
+  // content_id: number
+  // content_type_id?: number
+  addr1: string
+  addr2?: string
+  // booktour: boolean
+  // culture_heritage: boolean
+  // natural_heritage: boolean
+  // memory_heritage: boolean
+  // open_date?: string
+  // rest_date?: string
+  // age_limit?: string
   first_image?: string
-  first_image2?: string
-  tel?: string
-  nx: number
-  ny: number
+  // first_image2?: string
+  // tel?: string
+  mapx: number
+  mapy: number
   overview?: string
 }
 
@@ -43,14 +43,15 @@ const TouristSpotList = () => {
 
   const getTouristSpot = async () => {
     try {
-      const response = await axios.get(`/api/touristspot/all`, {
+      const response = await axios.get(`/api/touristspot`, {
         params: {
-          pageNum: page,
-          pageSize: 21,
+          page_no: page,
+          num_of_rows: 21,
           regions: childRegions,
           category_code: selectedCategory,
         },
       })
+
       setTouristSpots(response.data)
     } catch (error) {
       console.error('관광지 가져오기 오류:', error)
@@ -71,13 +72,15 @@ const TouristSpotList = () => {
   }
 
   const getMaxPage = async () => {
-    const response = await axios.get(`/api/touristspot/count`, {
+    const response = await axios.get(`/api/touristspot`, {
       params: {
+        page_no: 1,
+        num_of_rows: 100000,
         regions: childRegions,
         category_code: selectedCategory,
       },
     })
-    setMaxPage(Math.ceil(response.data / 21))
+    setMaxPage(Math.ceil(response.data.length / 21))
   }
 
   const onClickButton = async () => {
@@ -97,9 +100,13 @@ const TouristSpotList = () => {
         onClickButton={onClickButton}
         getCategoryArray={getCategoryArray}
       />
-      <Row xs={1} md={3} className='g-4'>
+      <Row
+        xs={1}
+        md={3}
+        className='g-4'
+      >
         {touristSpots.map((touristSpot) => (
-          <Col key={touristSpot.tourist_spot_id}>
+          <Col key={touristSpot.content_id}>
             <div className='listpage-box'>
               <img
                 src={touristSpot.first_image}
@@ -108,13 +115,17 @@ const TouristSpotList = () => {
               />
               <h5>{touristSpot.title}</h5>
               <a className='listpage-address'>
-                {touristSpot.address1.split(' ').slice(0, 2).join(' ')}
+                {touristSpot.addr1.split(' ').slice(0, 2).join(' ')}
               </a>
             </div>
           </Col>
         ))}
       </Row>
-      <Pagenation page={page} setPage={setPage} maxPage={maxPage} />
+      <Pagenation
+        page={page}
+        setPage={setPage}
+        maxPage={maxPage}
+      />
     </Container>
   )
 }

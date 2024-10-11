@@ -36,7 +36,7 @@ const RegionList = (props: any) => {
     setSelectChildRegions([])
     setSelectAllChildRegions(false)
     axios
-      .get(`/api/region/childregions?regionName=${regionName}`)
+      .get(`/api/region/childs`, { params: { parent_region: regionName } })
       .then((res: any) => {
         const resData = res.data.map((v: any) => v['region'])
         setChildRegions(resData)
@@ -76,7 +76,7 @@ const RegionList = (props: any) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/region/rootregions`)
+        const response = await axios.get(`/api/region/roots`)
         const resData = response.data.map((v: any) => v['region'])
         setRegions(resData)
       } catch (error) {

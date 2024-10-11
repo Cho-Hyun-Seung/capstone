@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
-import { ReactPropTypes, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Accordion, Button, Col, Container, Row } from 'react-bootstrap'
 import HorizonLine from '../HorizonLine'
 import '../../css/CategoryList.css'
@@ -41,7 +41,7 @@ const CategoryList = ({ getCategoryArray }: { getCategoryArray: any }) => {
   const [selectedCategory, setSelectedCategory] = useState<Category[]>([])
 
   const getRootCategory = async () => {
-    const response: AxiosResponse = await axios.get('/api/category/root')
+    const response: AxiosResponse = await axios.get('/api/category/roots')
     setLevel1(response.data)
   }
 
@@ -60,7 +60,8 @@ const CategoryList = ({ getCategoryArray }: { getCategoryArray: any }) => {
   const onClickCategory = async (category: Category) => {
     try {
       const response: AxiosResponse = await axios.get(
-        `/api/category/getdescendants/${category.category_code}`
+        `/api/category/descendants`,
+        { params: { parent_code: category.category_code } }
       )
       if (level1.includes(category)) {
         setLevel2(response.data)
@@ -94,13 +95,27 @@ const CategoryList = ({ getCategoryArray }: { getCategoryArray: any }) => {
   return (
     <Container className='category-container'>
       <div className='category-list'>
-        <Categories categories={level1} onClickCategory={onClickCategory} />
-        <Categories categories={level2} onClickCategory={onClickCategory} />
-        <Categories categories={level3} onClickCategory={onClickCategory} />
+        <Categories
+          categories={level1}
+          onClickCategory={onClickCategory}
+        />
+        <Categories
+          categories={level2}
+          onClickCategory={onClickCategory}
+        />
+        <Categories
+          categories={level3}
+          onClickCategory={(category: Category) =>
+            setCategoryFunction(category)
+          }
+        />
       </div>
       <div>
         {selectedCategory.map((v) => (
-          <Button className='selected-category' key={v.category_code}>
+          <Button
+            className='selected-category'
+            key={v.category_code}
+          >
             {v.category_name} <FaTimes onClick={() => setCategoryFunction(v)} />
           </Button>
         ))}

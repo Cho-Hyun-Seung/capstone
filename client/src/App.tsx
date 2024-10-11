@@ -1,5 +1,5 @@
 import './css/App.css'
-import Counter from './pages/Counter'
+
 import Home from './pages/Home'
 import { Link, Routes, Route } from 'react-router-dom'
 import Input from './pages/Input'
@@ -7,9 +7,9 @@ import Input2 from './pages/Input2'
 import List from './pages/List'
 import MainNavbar from './components/MainNavbar'
 import Festival from './pages/Festival'
-import { LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
 import TouristSpot from './pages/TouristSpot'
+import TouristSpotDetail from './pages/TouristSpotDetail'
 
 function App() {
   const isRoot = location.pathname === '/'
@@ -25,12 +25,34 @@ function App() {
         <Link to={'/list'}> List</Link>
       </nav> */}
       <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/festival' element={<Festival />} />
-        <Route path='/touristspot' element={<TouristSpot />} />
-        <Route path='/input' element={<Input />} />
-        <Route path='/input2' element={<Input2 />} />
-        <Route path='/list' element={<List />} />
+        <Route
+          path='/'
+          element={<Home />}
+        />
+        <Route
+          path='/festival'
+          element={<Festival />}
+        />
+        <Route
+          path='/touristspot'
+          element={<TouristSpot />}
+        />
+        <Route
+          path='/input'
+          element={<Input />}
+        />
+        <Route
+          path='/input2'
+          element={<Input2 />}
+        />
+        <Route
+          path='/list'
+          element={<List />}
+        />
+        <Route
+          path='/touristspotdetail'
+          element={<TouristSpotDetail />}
+        />
       </Routes>
       <br />
       <br />
