@@ -50,7 +50,7 @@ function App() {
           element={<List />}
         />
         <Route
-          path='/touristspotdetail'
+          path='/touristspot/:content_id'
           element={<TouristSpotDetail />}
         />
       </Routes>

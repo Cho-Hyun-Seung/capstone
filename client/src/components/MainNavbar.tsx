@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navbar, Nav, Container, NavDropdown, Button } from 'react-bootstrap'
+import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap'
 import '../css/Navbar.css'
 import LoginModal from './auth/LoginModal'
 
@@ -17,12 +17,10 @@ const MainNavbar = () => {
 
   const handleOpenModal = () => {
     setOpenModal(true)
-    return openModal
   }
 
   const handleCloseModal = () => {
     setOpenModal(false)
-    return openModal
   }
 
   return (
@@ -36,20 +34,16 @@ const MainNavbar = () => {
               show={dropdownOpen}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
+              id='basic-nav-dropdown'
             >
               <NavDropdown.Item href='/travelbydate'>
                 여행 달력
               </NavDropdown.Item>
               <NavDropdown.Item href='/festival'>축제</NavDropdown.Item>
-              <NavDropdown.Item href='/show'>공연 /행사</NavDropdown.Item>
+              <NavDropdown.Item href='/show'>공연 / 행사</NavDropdown.Item>
               <NavDropdown.Item href='/touristspot'>관광지</NavDropdown.Item>
-              {/* <NavDropdown.Divider />
-              <NavDropdown.Item href='#action/4'>
-                Separated link
-              </NavDropdown.Item> */}
             </NavDropdown>
             <Nav.Link href='/planner'>여행 플래너</Nav.Link>
-            {/* <Nav.Link href='/review'>후기</Nav.Link> */}
             <Nav.Link onClick={handleOpenModal}>로그인</Nav.Link>
             <LoginModal
               openModal={openModal}

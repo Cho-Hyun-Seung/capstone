@@ -4,35 +4,8 @@ import RegionList from './RegionList'
 import { Col, Container, Row } from 'react-bootstrap'
 import Pagenation from './Pagenation'
 import '../../css/ListPage.css'
-
-interface ITouristSpot {
-  content_id: number
-  category_code?: string
-  title: string
-  // content_id: number
-  // content_type_id?: number
-  addr1: string
-  addr2?: string
-  // booktour: boolean
-  // culture_heritage: boolean
-  // natural_heritage: boolean
-  // memory_heritage: boolean
-  // open_date?: string
-  // rest_date?: string
-  // age_limit?: string
-  first_image?: string
-  // first_image2?: string
-  // tel?: string
-  mapx: number
-  mapy: number
-  overview?: string
-}
-
-interface Category {
-  category_code: string
-  category_name: string
-  children: Category[]
-}
+import { useNavigate } from 'react-router-dom'
+import { Category, ITouristSpot } from 'src/utils/interface'
 
 const TouristSpotList = () => {
   const [touristSpots, setTouristSpots] = useState<ITouristSpot[]>([])
@@ -40,6 +13,8 @@ const TouristSpotList = () => {
   const [selectedCategory, setSelectedCategory] = useState<string[]>([])
   const [maxPage, setMaxPage] = useState<number>(1)
   const [page, setPage] = useState<number>(1)
+
+  const navigate = useNavigate()
 
   const getTouristSpot = async () => {
     try {
@@ -88,6 +63,12 @@ const TouristSpotList = () => {
     await getMaxPage()
   }
 
+  const handleBoxClick = (touristSpot: ITouristSpot) => {
+    const { content_id, mapx, mapy } = touristSpot
+    // navigate를 통해 content_id, mapx, mapy를 쿼리 파라미터로 전달
+    navigate(`/touristspot/${content_id}?mapx=${mapx}&mapy=${mapy}`)
+  }
+
   useEffect(() => {
     getMaxPage()
     getTouristSpot() // 초기 검색
@@ -107,7 +88,10 @@ const TouristSpotList = () => {
       >
         {touristSpots.map((touristSpot) => (
           <Col key={touristSpot.content_id}>
-            <div className='listpage-box'>
+            <div
+              className='listpage-box'
+              onClick={() => handleBoxClick(touristSpot)}
+            >
               <img
                 src={touristSpot.first_image}
                 // alt={touristSpot.title}

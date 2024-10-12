@@ -4,3 +4,13 @@
   margin-right: auto;
   /* background-color:; */
 }
+
+.nav-dropdown {
+  position: absolute; /* 드롭다운을 버튼 바로 아래에 위치시키기 위해 */
+  z-index: 1000; /* 드롭다운이 다른 요소 위에 나타나도록 */
+}
+
+.nav-dropdown-menu {
+  margin-top: 0; /* 드롭다운 메뉴의 상단 마진 제거 */
+  padding: 0; /* 필요에 따라 패딩 조정 */
+}
