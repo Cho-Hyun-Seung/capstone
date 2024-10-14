@@ -5,28 +5,7 @@ import { Col, Container, Row } from 'react-bootstrap'
 import dayjs from 'dayjs'
 import '../../css/ListPage.css'
 import Pagenation from './Pagenation'
-interface IFestival {
-  address1: string
-  address2?: string
-  age_limit?: string
-  booktour: boolean
-  category_code: string
-  charge?: string
-  content_id: number
-  content_type_id: number
-  discount_info?: string
-  event_end_date: string
-  event_start_date: string
-  festival_id: number
-  first_image?: string
-  first_image2?: string
-  homepage?: string
-  nx: number
-  ny: number
-  overview?: string
-  tel?: string
-  title: string
-}
+import { IFestival } from 'src/utils/interface'
 
 const FestivalList = () => {
   const [festivals, setFestivals] = useState<IFestival[]>([])
@@ -42,13 +21,13 @@ const FestivalList = () => {
 
   const getFestivals = async () => {
     try {
-      const response = await axios.get(`/api/festival/getbyrange`, {
+      const response = await axios.get(`/api/festival`, {
         params: {
-          pageNum: page,
-          pageSize: 21,
+          page_no: page,
+          num_of_rows: 21,
           regions: childRegions,
-          endDate: endDate,
-          startDate: startDate,
+          event_start_date: startDate,
+          event_end_date: endDate,
         },
       })
       setFestivals(response.data)
@@ -60,11 +39,13 @@ const FestivalList = () => {
   }
 
   const getMaxPage = async () => {
-    const response = await axios.get(`/api/festival/count`, {
+    const response = await axios.get(`/api/festival`, {
       params: {
+        page_no: 1,
+        num_of_rows: 100000,
         regions: childRegions,
-        endDate: endDate,
-        startDate: startDate,
+        event_start_date: startDate,
+        event_end_date: endDate,
       },
     })
     setMaxPage(Math.ceil(response.data / 21))
@@ -102,9 +83,13 @@ const FestivalList = () => {
           getChildRegions={getChildRegions}
           onClickButton={onClickButton}
         />
-        <Row xs={1} md={3} className='g-4'>
+        <Row
+          xs={1}
+          md={3}
+          className='g-4'
+        >
           {festivals.map((festival) => (
-            <Col key={festival.festival_id}>
+            <Col key={festival.content_id}>
               <div className='listpage-box'>
                 <img
                   src={festival.first_image}
@@ -117,13 +102,17 @@ const FestivalList = () => {
                   {festival.event_end_date.split('T')[0]}
                 </a>
                 <a className='listpage-address'>
-                  {festival.address1.split(' ').slice(0, 2).join(' ')}
+                  {festival.addr1.split(' ').slice(0, 2).join(' ')}
                 </a>
               </div>
             </Col>
           ))}
         </Row>
-        <Pagenation page={page} setPage={setPage} maxPage={maxPage} />
+        <Pagenation
+          page={page}
+          setPage={setPage}
+          maxPage={maxPage}
+        />
       </Container>
     </div>
   )

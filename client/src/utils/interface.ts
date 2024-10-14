@@ -22,6 +22,28 @@ export interface ITouristSpot {
   overview?: string
 }
 
+export interface IFestival {
+  addr1: string
+  addr2?: string
+  // age_limit?: string
+  // booktour: boolean
+  // category_code: string
+  // charge?: string
+  content_id: number
+  // content_type_id: number
+  // discount_info?: string
+  event_end_date: string
+  event_start_date: string
+  first_image?: string
+  first_image2?: string
+  // homepage?: string
+  mapx: number
+  mapy: number
+  overview?: string
+  // tel?: string
+  title: string
+}
+
 export interface Category {
   category_code: string
   category_name: string
