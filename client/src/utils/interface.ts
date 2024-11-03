@@ -1,3 +1,5 @@
+import internal from 'stream'
+
 export interface ITouristSpot {
   content_id: number
   category_code?: string
@@ -48,4 +50,11 @@ export interface Category {
   category_code: string
   category_name: string
   children: Category[]
+}
+
+export interface IRegion {
+  id: number
+  region: string
+  parent_code: number
+  sigungu_code: number
 }

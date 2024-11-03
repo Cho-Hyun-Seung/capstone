@@ -5,11 +5,11 @@ import { Col, Container, Row } from 'react-bootstrap'
 import Pagenation from './Pagenation'
 import '../../css/ListPage.css'
 import { useNavigate } from 'react-router-dom'
-import { Category, ITouristSpot } from 'src/utils/interface'
+import { Category, IRegion, ITouristSpot } from 'src/utils/interface'
 
 const TouristSpotList = () => {
   const [touristSpots, setTouristSpots] = useState<ITouristSpot[]>([])
-  const [childRegions, setChildRegions] = useState<String[]>([])
+  const [region, setRegion] = useState<IRegion>()
   const [selectedCategory, setSelectedCategory] = useState<string[]>([])
   const [maxPage, setMaxPage] = useState<number>(1)
   const [page, setPage] = useState<number>(1)
@@ -22,21 +22,23 @@ const TouristSpotList = () => {
         params: {
           page_no: page,
           num_of_rows: 21,
-          regions: childRegions,
-          category_code: selectedCategory,
+          parent_code: region?.parent_code,
+          sigungu_code: region?.sigungu_code,
+          category_code: selectedCategory.join(','),
         },
       })
 
       setTouristSpots(response.data)
     } catch (error) {
       console.error('관광지 가져오기 오류:', error)
+      setTouristSpots([])
       throw new Error('관광지를 가져오는 중 오류가 발생했습니다.')
     }
   }
 
-  const getChildRegions = (regions: string[]) => {
-    setChildRegions(regions)
-    console.log(regions)
+  const getRegion = (region: IRegion) => {
+    setRegion(region)
+    console.log('관광지에서', region)
   }
 
   const getCategoryArray = (categories: Category[]) => {
@@ -49,10 +51,11 @@ const TouristSpotList = () => {
   const getMaxPage = async () => {
     const response = await axios.get(`/api/touristspot`, {
       params: {
-        page_no: 1,
-        num_of_rows: 100000,
-        regions: childRegions,
-        category_code: selectedCategory,
+        page_no: page,
+        num_of_rows: 20000,
+        parent_code: region?.parent_code,
+        sigungu_code: region?.sigungu_code,
+        category_code: selectedCategory.join(','),
       },
     })
     setMaxPage(Math.ceil(response.data.length / 21))
@@ -77,7 +80,7 @@ const TouristSpotList = () => {
   return (
     <Container>
       <RegionList
-        getChildRegions={getChildRegions}
+        getRegion={getRegion}
         onClickButton={onClickButton}
         getCategoryArray={getCategoryArray}
       />

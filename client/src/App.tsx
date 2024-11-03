@@ -10,6 +10,7 @@ import Festival from './pages/Festival'
 
 import TouristSpot from './pages/TouristSpot'
 import TouristSpotDetail from './pages/TouristSpotDetail'
+import FestivalDetail from './pages/FestivalDetail'
 
 function App() {
   const isRoot = location.pathname === '/'
@@ -48,6 +49,10 @@ function App() {
         <Route
           path='/list'
           element={<List />}
+        />
+        <Route
+          path='/festival/:content_id'
+          element={<FestivalDetail />}
         />
         <Route
           path='/touristspot/:content_id'

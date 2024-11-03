@@ -16,29 +16,32 @@ import { Location, useLocation } from 'react-router-dom'
 import CategoryList from './CategoryList'
 import { FaAngleDown } from 'react-icons/fa'
 import '../../css/RegionList.css'
+import { IRegion } from 'src/utils/interface'
 
 const RegionList = (props: any) => {
-  const [regions, setRegions] = useState<string[]>([])
-  const [selectParentRegion, setSelectParentRegion] = useState<string>('')
-  const [childRegions, setChildRegions] = useState<string[]>([])
-  const [selectChildRegions, setSelectChildRegions] = useState<string[]>([])
+  const [regions, setRegions] = useState<IRegion[]>([])
+  const [selectParentRegion, setSelectParentRegion] = useState<IRegion>()
+  const [childRegions, setChildRegions] = useState<IRegion[]>([])
+  const [selectChildRegions, setSelectChildRegions] = useState<IRegion>()
   const [childMenuOpen, setChildMenuOpen] = useState<boolean>(false)
-  const [selectAllChildRegions, setSelectAllChildRegions] =
-    useState<boolean>(false)
   const location: Location = useLocation()
   const [isCategoryListOpen, setCategoryListOpen] = useState(false)
+  const [selectRegion, setSelectRegion] = useState<IRegion>()
 
   const onClickCategoryButton = () => {
     setCategoryListOpen(!isCategoryListOpen)
   }
-  const onClickParentRegion = (regionName: string) => {
-    setSelectParentRegion(regionName)
-    setSelectChildRegions([])
-    setSelectAllChildRegions(false)
+  const onClickParentRegion = (region: IRegion) => {
+    console.log(region)
+    setSelectParentRegion(region)
+    setSelectRegion(region)
+    setSelectChildRegions(undefined)
     axios
-      .get(`/api/region/childs`, { params: { parent_region: regionName } })
+      .get(`/api/region/childs`, {
+        params: { parent_code: region.sigungu_code },
+      })
       .then((res: any) => {
-        const resData = res.data.map((v: any) => v['region'])
+        const resData = res.data.map((v: any) => v)
         setChildRegions(resData)
       })
       .catch((error: any) => {
@@ -49,35 +52,21 @@ const RegionList = (props: any) => {
   const onClickShigungu = () => {
     setChildMenuOpen(!childMenuOpen)
   }
-  const onClickChildRegion = (parentRegion: string, regionName: string) => {
-    console.log(regionName)
-    const resultRegion = `${parentRegion} ${regionName}`
-    if (selectChildRegions.includes(resultRegion)) {
-      setSelectChildRegions((prevRegions) =>
-        prevRegions.filter((v) => v !== resultRegion)
-      )
+  const onClickChildRegion = (region: IRegion) => {
+    if (selectChildRegions === region) {
+      setSelectRegion(undefined)
+      setSelectChildRegions(undefined)
     } else {
-      setSelectChildRegions((prevRegions) => [...prevRegions, resultRegion])
+      setSelectRegion(region)
+      setSelectChildRegions(region)
     }
-  }
-
-  const onSelectAllChildRegions = () => {
-    if (selectAllChildRegions) {
-      setSelectChildRegions([])
-    } else {
-      const allChildRegions = childRegions.map(
-        (regionName) => `${selectParentRegion} ${regionName}`
-      )
-      setSelectChildRegions(allChildRegions)
-    }
-    setSelectAllChildRegions(!selectAllChildRegions)
   }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/api/region/roots`)
-        const resData = response.data.map((v: any) => v['region'])
+        const resData = response.data
         setRegions(resData)
       } catch (error) {
         console.error('루트 지역을 가져오는 중 오류 발생:', error)
@@ -88,8 +77,9 @@ const RegionList = (props: any) => {
   }, [])
 
   useEffect(() => {
-    props.getChildRegions(selectChildRegions)
-  }, [selectChildRegions])
+    props.getRegion(selectRegion)
+    console.log(selectRegion)
+  }, [selectRegion])
 
   return (
     <Container style={{ margin: 'auto', marginBottom: '50px' }}>
@@ -110,9 +100,9 @@ const RegionList = (props: any) => {
               className='dropdown-toggle'
               style={{ minWidth: '168px', minHeight: '56px' }}
             >
-              {selectParentRegion === ''
+              {selectParentRegion === undefined
                 ? '시/도 선택 '
-                : selectParentRegion + ' '}{' '}
+                : selectParentRegion.region + ' '}{' '}
               <FaAngleDown />
             </Dropdown.Toggle>
             <Dropdown.Menu
@@ -123,20 +113,21 @@ const RegionList = (props: any) => {
                 maxHeight: '200px',
               }}
             >
-              {regions.map((regionName) => (
-                <Dropdown.Item
-                  style={{ width: '150px' }}
-                  className={
-                    selectParentRegion === regionName
-                      ? 'parent-list-group-item active'
-                      : 'parent-list-group-item'
-                  }
-                  key={regionName}
-                  onClick={() => onClickParentRegion(regionName)}
-                >
-                  {regionName}
-                </Dropdown.Item>
-              ))}
+              {regions &&
+                regions.map((region) => (
+                  <Dropdown.Item
+                    style={{ width: '150px' }}
+                    className={
+                      selectParentRegion === region
+                        ? 'parent-list-group-item active'
+                        : 'parent-list-group-item'
+                    }
+                    key={region.region}
+                    onClick={() => onClickParentRegion(region)}
+                  >
+                    {region.region}
+                  </Dropdown.Item>
+                ))}
             </Dropdown.Menu>
           </Dropdown>
         </Col>
@@ -151,15 +142,9 @@ const RegionList = (props: any) => {
                 minHeight: '56px',
               }}
             >
-              {selectChildRegions.length === 0
+              {selectChildRegions === undefined
                 ? '시/군/구 선택 '
-                : selectChildRegions.length === childRegions.length
-                ? '전체선택 '
-                : selectChildRegions.length === 1
-                ? selectChildRegions[0].split(' ')[1] + ' '
-                : `${selectChildRegions[0].split(' ')[1]} 등 ${
-                    selectChildRegions.length
-                  }개 `}
+                : selectChildRegions.region + ' '}{' '}
               <FaAngleDown />
             </Dropdown.Toggle>
             <Dropdown.Menu
@@ -170,27 +155,17 @@ const RegionList = (props: any) => {
                 maxHeight: '200px',
               }}
             >
-              <Dropdown.Item
-                className='child-list-group-item'
-                onClick={onSelectAllChildRegions}
-              >
-                {selectAllChildRegions ? '전체선택 해제' : '전체선택'}
-              </Dropdown.Item>
-              {childRegions.map((regionName) => (
+              {childRegions.map((region) => (
                 <Dropdown.Item
                   className={
-                    selectChildRegions.includes(
-                      `${selectParentRegion} ${regionName}`
-                    )
+                    selectChildRegions == region
                       ? 'child-list-group-item active'
                       : 'child-list-group-item'
                   }
-                  key={regionName}
-                  onClick={() =>
-                    onClickChildRegion(selectParentRegion, regionName)
-                  }
+                  key={region.id}
+                  onClick={() => onClickChildRegion(region)}
                 >
-                  {regionName}
+                  {region.region}
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>

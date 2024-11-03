@@ -5,11 +5,12 @@ import { Col, Container, Row } from 'react-bootstrap'
 import dayjs from 'dayjs'
 import '../../css/ListPage.css'
 import Pagenation from './Pagenation'
-import { IFestival } from 'src/utils/interface'
+import { IFestival, IRegion } from 'src/utils/interface'
+import { useNavigate } from 'react-router-dom'
 
 const FestivalList = () => {
   const [festivals, setFestivals] = useState<IFestival[]>([])
-  const [childRegions, setChildRegions] = useState<string[]>([])
+  const [region, setRegion] = useState<IRegion>()
   const [startDate, setStartDate] = useState<string | null>(
     dayjs().format('YYYY-MM-DD')
   )
@@ -19,13 +20,16 @@ const FestivalList = () => {
   const [maxPage, setMaxPage] = useState<number>(1)
   const [page, setPage] = useState<number>(1)
 
+  const navigate = useNavigate()
+
   const getFestivals = async () => {
     try {
       const response = await axios.get(`/api/festival`, {
         params: {
           page_no: page,
           num_of_rows: 21,
-          regions: childRegions,
+          parent_code: region?.parent_code,
+          sigungu_code: region?.sigungu_code,
           event_start_date: startDate,
           event_end_date: endDate,
         },
@@ -33,6 +37,7 @@ const FestivalList = () => {
       setFestivals(response.data)
     } catch (error) {
       console.error('축제 가져오기 오류:', error)
+      setFestivals([])
       //! 결과 값이 0인 경우 오류가 존재함!!
       throw new Error('축제를 가져오는 중 오류가 발생했습니다.')
     }
@@ -43,7 +48,8 @@ const FestivalList = () => {
       params: {
         page_no: 1,
         num_of_rows: 100000,
-        regions: childRegions,
+        parent_code: region?.parent_code,
+        sigungu_code: region?.parent_code,
         event_start_date: startDate,
         event_end_date: endDate,
       },
@@ -51,6 +57,11 @@ const FestivalList = () => {
     setMaxPage(Math.ceil(response.data / 21))
   }
 
+  const handleBoxClick = (festival: IFestival) => {
+    const { content_id, mapx, mapy } = festival
+    // navigate를 통해 content_id, mapx, mapy를 쿼리 파라미터로 전달
+    navigate(`/festival/${content_id}?mapx=${mapx}&mapy=${mapy}`)
+  }
   const getStartDate = (date: string) => {
     setStartDate(date)
   }
@@ -59,9 +70,9 @@ const FestivalList = () => {
     setEndDate(date)
   }
 
-  const getChildRegions = (regions: string[]) => {
-    setChildRegions(regions)
-    console.log(regions)
+  const getRegion = (region: IRegion) => {
+    setRegion(region)
+    console.log('축제에서', region)
   }
 
   const onClickButton = async () => {
@@ -80,7 +91,7 @@ const FestivalList = () => {
         <RegionList
           getStartDate={getStartDate}
           getEndDate={getEndDate}
-          getChildRegions={getChildRegions}
+          getRegion={getRegion}
           onClickButton={onClickButton}
         />
         <Row
@@ -90,7 +101,10 @@ const FestivalList = () => {
         >
           {festivals.map((festival) => (
             <Col key={festival.content_id}>
-              <div className='listpage-box'>
+              <div
+                className='listpage-box'
+                onClick={() => handleBoxClick(festival)}
+              >
                 <img
                   src={festival.first_image}
                   alt={festival.title}

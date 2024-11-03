@@ -1,23 +1,23 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
-import { ITouristSpot } from 'src/utils/interface'
+import { IFestival, ITouristSpot } from 'src/utils/interface'
 import { useLocation, useNavigate, useParams } from 'react-router-dom' // URL 파라미터를 가져오기 위해 import
 import '../css/ListPage.css'
 
 const TouristSpotDetail = () => {
   const { content_id } = useParams() // URL에서 content_id 가져오기
-  const [touristSpot, setTouristSpot] = useState<ITouristSpot | null>(null)
+  const [festival, setFestival] = useState<IFestival | null>(null)
 
   const getTouristSpot = async () => {
     try {
-      const response = await axios.get(`/api/touristspot/detail`, {
+      const response = await axios.get(`/api/festival/detail`, {
         params: {
           content_id: content_id, // content_id 추가
           num_of_rows: 1,
         },
       })
 
-      setTouristSpot(response.data) // response.data에 필요한 데이터가 있다고 가정
+      setFestival(response.data) // response.data에 필요한 데이터가 있다고 가정
     } catch (error) {
       console.error('관광지 가져오기 오류:', error)
       throw new Error('관광지를 가져오는 중 오류가 발생했습니다.')
@@ -37,12 +37,12 @@ const TouristSpotDetail = () => {
         padding: '0 120px', // 좌우 여백
       }}
     >
-      {touristSpot && ( // touristSpot이 null이 아닐 때만 렌더링
+      {festival && ( // touristSpot이 null이 아닐 때만 렌더링
         <>
           <div style={{ flex: '0 0 50%', paddingRight: '20px' }}>
             <img
-              src={touristSpot.first_image}
-              alt={touristSpot.title}
+              src={festival.first_image}
+              alt={festival.title}
               style={{
                 minHeight: '300px', // 최소 높이 설정
                 maxHeight: '400px', // 최대 높이 설정
@@ -62,8 +62,8 @@ const TouristSpotDetail = () => {
               marginTop: '20px', // 텍스트 위에 살짝 여백 추가
             }}
           >
-            <h3>{touristSpot.title}</h3>
-            <h6 style={{ color: '#4a4a4a' }}>{touristSpot.addr1}</h6>
+            <h3>{festival.title}</h3>
+            <h6 style={{ color: '#4a4a4a' }}>{festival.addr1}</h6>
 
             {/* 물결 모양 비율 표시 */}
             <div
