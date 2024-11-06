@@ -1,0 +1,122 @@
+@font-face {
+  font-family: 'gmarketSansLight';
+  src: url('../assets/fonts/GmarketSansTTFLight.ttf');
+}
+
+@font-face {
+  font-family: 'gmarketSansBold';
+  src: url('../assets/fonts/GmarketSansTTFBold.ttf');
+}
+
+.tourist-spot-detail-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 120px;
+}
+
+.tourist-spot-content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.image-container {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.festival-image {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.text-and-map-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.title-address {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.title-address h6 {
+  color: #4a4a4a;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background-color: #ccc;
+  margin-bottom: 10px;
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
+}
+
+.nearby-tourist-spots {
+  margin-top: 60px;
+  padding: 0 120px;
+}
+
+.nearby-tourist-spots h4 {
+  text-align: left;
+}
+
+.tourist-spots-container {
+  display: flex;
+  flex-wrap: wrap; /* 여러 줄에 걸쳐 표시되도록 설정 */
+  justify-content: flex-start; /* 좌측 정렬 */
+}
+
+.list-box {
+  margin: 10px; /* 박스 간의 간격 조정 */
+  height: 270px;
+  width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  text-align: left; /* 텍스트를 좌측 정렬 */
+}
+
+.list-box:hover {
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.spot-image {
+  width: 100%;
+  height: 150px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.spot-title {
+  margin: 10px; /* 제목의 여백 설정 */
+  font-size: 1.1rem; /* 제목 글씨 크기 */
+}
+
+.list-box h5 {
+  font-family: 'gmarketSansBold';
+  height: 40px; /* 텍스트 높이 고정 */
+  margin-top: 10px;
+  margin-right: auto;
+  text-align: left; /* 텍스트 좌측 정렬 */
+  word-wrap: break-word; /* 띄어쓰기를 기준으로 줄 바꿈 */
+}
+
+.list-address {
+  margin: 10px; /* 주소의 여백 설정 */
+  color: #6a6a6a;
+  text-decoration: none;
+  display: block; /* 블록 요소로 설정하여 정렬 적용 */
+  text-align: left; /* 좌측 정렬 */
+}

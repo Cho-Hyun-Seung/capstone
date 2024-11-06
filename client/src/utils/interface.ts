@@ -4,6 +4,9 @@ export interface ITouristSpot {
   content_id: number
   category_code?: string
   title: string
+  positive: number
+  negative: number
+  total_review: number
   // content_id: number
   // content_type_id?: number
   addr1: string

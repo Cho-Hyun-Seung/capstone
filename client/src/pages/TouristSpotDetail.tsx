@@ -2,7 +2,8 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { ITouristSpot } from 'src/utils/interface'
 import { useLocation, useNavigate, useParams } from 'react-router-dom' // URL 파라미터를 가져오기 위해 import
-import '../css/ListPage.css'
+import '../css/detailPage.css'
+import default_image from '../img/default_img.png'
 
 const TouristSpotDetail = () => {
   const { content_id } = useParams() // URL에서 content_id 가져오기
@@ -41,7 +42,11 @@ const TouristSpotDetail = () => {
         <>
           <div style={{ flex: '0 0 50%', paddingRight: '20px' }}>
             <img
-              src={touristSpot.first_image}
+              src={
+                touristSpot.first_image !== ''
+                  ? touristSpot.first_image
+                  : default_image
+              }
               alt={touristSpot.title}
               style={{
                 minHeight: '300px', // 최소 높이 설정
@@ -65,36 +70,62 @@ const TouristSpotDetail = () => {
             <h3>{touristSpot.title}</h3>
             <h6 style={{ color: '#4a4a4a' }}>{touristSpot.addr1}</h6>
 
-            {/* 물결 모양 비율 표시 */}
             <div
               style={{
                 width: '100%',
                 position: 'relative',
                 height: '30px',
+                borderRadius: '15px',
+                overflow: 'hidden',
+                backgroundColor: !touristSpot.total_review
+                  ? '#BDBDBD'
+                  : 'transparent', // 회색 배경 설정
               }}
             >
-              <div
-                style={{
-                  position: 'absolute',
-                  left: '0',
-                  top: '50%',
-                  width: '60%', // 긍정 비율
-                  height: '100%',
-                  backgroundColor: '#4CAF50', // 긍정 색상 (녹색)
-                  borderRadius: '15px 0 0 15px', // 좌측 둥글게
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  right: '0',
-                  top: '50%',
-                  width: '40%', // 부정 비율
-                  height: '100%',
-                  backgroundColor: '#F44336', // 부정 색상 (빨강)
-                  borderRadius: '0 15px 15px 0', // 우측 둥글게
-                }}
-              />
+              {touristSpot.total_review ? (
+                <>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: '0',
+                      top: '0',
+                      width: `${
+                        (touristSpot.positive / touristSpot.total_review) * 100
+                      }%`, // 긍정 비율
+                      height: '100%',
+                      backgroundColor: '#4CAF50', // 긍정 색상 (녹색)
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: `${
+                        (touristSpot.positive / touristSpot.total_review) * 100
+                      }%`,
+                      top: '0',
+                      width: `${
+                        (touristSpot.negative / touristSpot.total_review) * 100
+                      }%`, // 부정 비율
+                      height: '100%',
+                      backgroundColor: '#F44336', // 부정 색상 (빨강)
+                    }}
+                  />
+                </>
+              ) : (
+                // total_review가 없는 경우 회색 배경만 표시
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    textAlign: 'center',
+                    justifyContent: 'center',
+                    color: '#757575',
+                    backgroundColor: '#BDBDBD', // 회색 배경 (데이터 없음)
+                  }}
+                >
+                  리뷰가 부족합니다
+                </div>
+              )}
             </div>
 
             {/* 구분선 추가 */}
@@ -116,37 +147,29 @@ const TouristSpotDetail = () => {
   )
 }
 
-// NearbyTouristSpots 컴포넌트는 그대로 사용합니다.
 const NearbyTouristSpots = () => {
   const { content_id } = useParams()
   const navigate = useNavigate()
   const [nearbySpots, setNearbySpots] = useState<ITouristSpot[]>([])
-  const location = useLocation() // 쿼리 파라미터 가져오기
-  const queryParams = new URLSearchParams(location.search) // 쿼리 파라미터 처리
-
-  const map_x = queryParams.get('mapx') // 쿼리 파라미터에서 mapx 가져오기
-  const map_y = queryParams.get('mapy') // 쿼리 파라미터에서 mapy 가져오기
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const map_x = queryParams.get('mapx')
+  const map_y = queryParams.get('mapy')
 
   const getNearbyTouristSpots = async () => {
     try {
       const response = await axios.get('/api/touristspot/nearby', {
-        params: {
-          content_id: content_id,
-          map_x: map_x,
-          map_y: map_y,
-        },
+        params: { content_id, map_x, map_y },
       })
-
       setNearbySpots(response.data)
     } catch (error) {
       console.error('Nearby tourist spots fetch error:', error)
-      throw new Error('Failed to fetch nearby tourist spots.')
+      alert('주변 여행지를 가져오는 중 오류가 발생했습니다.')
     }
   }
 
   const handleBoxClick = (touristSpot: ITouristSpot) => {
     const { content_id, mapx, mapy } = touristSpot
-    // navigate를 통해 content_id, mapx, mapy를 쿼리 파라미터로 전달
     navigate(`/touristspot/${content_id}?mapx=${mapx}&mapy=${mapy}`)
   }
 
@@ -155,40 +178,32 @@ const NearbyTouristSpots = () => {
   }, [content_id])
 
   return (
-    <div style={{ marginTop: '60px', padding: '0 120px' }}>
-      <h4 style={{ textAlign: 'left' }}>주변 여행지</h4>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          flexWrap: 'wrap',
-        }}
-      >
+    <div className='nearby-tourist-spots'>
+      <h4>주변 여행지</h4>
+      <div className='tourist-spots-container'>
         {nearbySpots.map((touristSpot, index) => (
           <div
             key={index}
             onClick={() => handleBoxClick(touristSpot)}
-            className='listpage-box'
+            className='list-box'
           >
             <img
-              src={touristSpot.first_image}
+              src={
+                touristSpot.first_image !== ''
+                  ? touristSpot.first_image
+                  : default_image
+              }
               alt={touristSpot.title}
+              className='spot-image'
             />
-            <h5>{touristSpot.title}</h5>
-            <a
-              href='#'
-              className='listpage-address'
-            >
-              {touristSpot.addr1}
-            </a>{' '}
-            {/* 주소 링크 추가 */}
+            <h5 className='spot-title'>{touristSpot.title}</h5>
+            <span className='list-address'>{touristSpot.addr1}</span>
           </div>
         ))}
       </div>
     </div>
   )
 }
-
 const TouristSpotDetailPage = () => {
   return (
     <div>

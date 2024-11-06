@@ -7,6 +7,7 @@ import '../../css/ListPage.css'
 import Pagenation from './Pagenation'
 import { IFestival, IRegion } from 'src/utils/interface'
 import { useNavigate } from 'react-router-dom'
+import default_image from '../../img/default_img.png'
 
 const FestivalList = () => {
   const [festivals, setFestivals] = useState<IFestival[]>([])
@@ -54,7 +55,7 @@ const FestivalList = () => {
         event_end_date: endDate,
       },
     })
-    setMaxPage(Math.ceil(response.data / 21))
+    setMaxPage(Math.ceil(response.data.length / 21))
   }
 
   const handleBoxClick = (festival: IFestival) => {
@@ -72,7 +73,6 @@ const FestivalList = () => {
 
   const getRegion = (region: IRegion) => {
     setRegion(region)
-    console.log('축제에서', region)
   }
 
   const onClickButton = async () => {
@@ -106,14 +106,30 @@ const FestivalList = () => {
                 onClick={() => handleBoxClick(festival)}
               >
                 <img
-                  src={festival.first_image}
+                  src={
+                    festival.first_image !== ''
+                      ? festival.first_image
+                      : default_image
+                  }
                   alt={festival.title}
                   className='img-fluid'
                 />
                 <h5>{festival.title}</h5>
                 <a>
-                  {festival.event_start_date.split('T')[0]} ~{' '}
-                  {festival.event_end_date.split('T')[0]}
+                  {`${festival.event_start_date.substring(
+                    0,
+                    4
+                  )}. ${festival.event_start_date.substring(
+                    4,
+                    6
+                  )}. ${festival.event_start_date.substring(6, 8)} ~ `}
+                  {`${festival.event_end_date.substring(
+                    0,
+                    4
+                  )}. ${festival.event_end_date.substring(
+                    4,
+                    6
+                  )}. ${festival.event_end_date.substring(6, 8)}`}
                 </a>
                 <a className='listpage-address'>
                   {festival.addr1.split(' ').slice(0, 2).join(' ')}

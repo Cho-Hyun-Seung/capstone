@@ -11,6 +11,7 @@ import Festival from './pages/Festival'
 import TouristSpot from './pages/TouristSpot'
 import TouristSpotDetail from './pages/TouristSpotDetail'
 import FestivalDetail from './pages/FestivalDetail'
+import Planner from './pages/Planner'
 
 function App() {
   const isRoot = location.pathname === '/'
@@ -57,6 +58,11 @@ function App() {
         <Route
           path='/touristspot/:content_id'
           element={<TouristSpotDetail />}
+        />
+
+        <Route
+          path='/planner'
+          element={<Planner />}
         />
       </Routes>
       <br />

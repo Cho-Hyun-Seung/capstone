@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap'
 import '../css/Navbar.css'
 import LoginModal from './auth/LoginModal'
-
+import logo from '../img/logo.png'
 const MainNavbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -27,7 +27,14 @@ const MainNavbar = () => {
     <div>
       <Navbar className='main_navbar'>
         <Container>
-          <Navbar.Brand href='/'>Navbar</Navbar.Brand>
+          <Navbar.Brand href='/'>
+            <img
+              className='logo_image'
+              alt='main_logo'
+              src={logo}
+              style={{ width: '180px', height: 'auto' }} // 원하는 크기로 설정
+            />
+          </Navbar.Brand>
           <Nav className='ms-auto'>
             {/* <NavDropdown
               title='여행정보'
@@ -43,7 +50,6 @@ const MainNavbar = () => {
               <NavDropdown.Item href='/show'>공연 / 행사</NavDropdown.Item>
               <NavDropdown.Item href='/touristspot'>관광지</NavDropdown.Item> */}
             {/* </NavDropdown> */}
-            {/* <Nav.Link href='/planner'>여행 플래너</Nav.Link> */}
             {/* <Nav.Link onClick={handleOpenModal}>로그인</Nav.Link> */}
             <Nav.Link href='/festival'>축제</Nav.Link>
             <Nav.Link href='/touristspot'>관광지</Nav.Link>
@@ -51,6 +57,7 @@ const MainNavbar = () => {
               openModal={openModal}
               handleCloseModal={handleCloseModal}
             />
+            <Nav.Link href='/planner'>플래너</Nav.Link>
           </Nav>
         </Container>
       </Navbar>

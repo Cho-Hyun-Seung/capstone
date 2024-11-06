@@ -3,17 +3,10 @@ import { useEffect, useState } from 'react'
 import { Col, Row } from 'react-bootstrap'
 import Carousel from 'react-bootstrap/Carousel'
 import '../css/carousel.css'
-
-interface ICarouselFestival {
-  festival_id: number
-  title: string
-  event_start_date: string
-  event_end_date: string
-  first_image: string
-}
+import { IFestival } from 'src/utils/interface'
 
 const MainCarousel = () => {
-  const [festivals, setFestivals] = useState<ICarouselFestival[]>([])
+  const [festivals, setFestivals] = useState<IFestival[]>([])
   const [index, setIndex] = useState<number>(0)
 
   const handleSelect = (selectedIndex: number, e: any) => {
@@ -29,13 +22,21 @@ const MainCarousel = () => {
         const nextMonth =
           month === '12' ? '01' : ('0' + (today.getMonth() + 2)).slice(-2)
         const day = ('0' + today.getDate()).slice(-2)
-        const startDate = `${year}/${month}/${day}`
-        const endDate = `${year}/${nextMonth}/${day}`
+        const startDate = `${year}${month}${day}`
+        const endDate = `${year}${nextMonth}${day}`
 
-        const response = await axios.get(
-          `/api/festival/getbydate?startDate=${startDate}&endDate=${endDate}&size=3`
-        )
-        setFestivals(response.data)
+        const response = await axios.get(`/api/festival`, {
+          params: {
+            page_no: 1,
+            num_of_rows: 10,
+            event_start_date: startDate,
+            event_end_date: endDate,
+          },
+        })
+        const festival_data: IFestival[] = await response.data
+          .filter((v: IFestival) => v.first_image !== '')
+          .slice(0, 3)
+        setFestivals(festival_data)
       } catch (error) {
         console.error('Error fetching carousel festival:', error)
       }
@@ -62,16 +63,37 @@ const MainCarousel = () => {
       onSlid={handleCarouselEnd}
     >
       {festivals.map((festival, idx) => (
-        <Carousel.Item key={idx + festivals.length} interval={1500}>
+        <Carousel.Item
+          key={idx + festivals.length}
+          interval={1500}
+        >
           <Row>
-            <Col xs={6} className='festival_info'>
+            <Col
+              xs={6}
+              className='festival_info'
+            >
               <h1 className='festival_title'>{festival.title}</h1>
               <h5 className='festival_schedule'>
-                {festival.event_start_date.split('T')[0]} ~{' '}
-                {festival.event_end_date.split('T')[0]}
+                {`${festival.event_start_date.substring(
+                  0,
+                  4
+                )}. ${festival.event_start_date.substring(
+                  4,
+                  6
+                )}. ${festival.event_start_date.substring(6, 8)} ~ `}
+                {`${festival.event_end_date.substring(
+                  0,
+                  4
+                )}. ${festival.event_end_date.substring(
+                  4,
+                  6
+                )}. ${festival.event_end_date.substring(6, 8)}`}
               </h5>
             </Col>
-            <Col xs={6} className='carousel-image-box'>
+            <Col
+              xs={6}
+              className='carousel-image-box'
+            >
               <img
                 className='carousel-image'
                 src={festival.first_image}

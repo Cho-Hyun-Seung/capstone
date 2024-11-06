@@ -1,0 +1,51 @@
+.planner-container {
+  padding: 20px 100px;
+}
+
+.planner-festival-box {
+  width: 100%;
+  height: 330px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.3s, background-color 0.2s;
+}
+
+.planner-festival-box:hover {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.planner-festival-box.active {
+  background-color: rgba(0, 0, 0, 0.1); /* 클릭 상태에서 회색 배경 */
+}
+
+.planner-festival-box img {
+  width: 100%;
+  height: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.planner-festival-box h5 {
+  font-family: 'gmarketSansBold';
+  font-size: 1.1rem;
+  height: 40px;
+  margin-top: 10px;
+  text-align: left;
+  line-height: 1.2;
+}
+
+.planner-festival-dates,
+.planner-festival-address {
+  font-family: 'gmarketSansLight';
+  color: #4a4a4a;
+  text-align: left;
+  margin-top: 5px;
+  display: block;
+}
+
+.planner-festival-address {
+  font-size: 0.9rem;
+  color: #6a6a6a;
+}

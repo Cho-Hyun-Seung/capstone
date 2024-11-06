@@ -6,6 +6,7 @@ import Pagenation from './Pagenation'
 import '../../css/ListPage.css'
 import { useNavigate } from 'react-router-dom'
 import { Category, IRegion, ITouristSpot } from 'src/utils/interface'
+import default_image from '../../img/default_img.png'
 
 const TouristSpotList = () => {
   const [touristSpots, setTouristSpots] = useState<ITouristSpot[]>([])
@@ -51,7 +52,7 @@ const TouristSpotList = () => {
   const getMaxPage = async () => {
     const response = await axios.get(`/api/touristspot`, {
       params: {
-        page_no: page,
+        page_no: 1,
         num_of_rows: 20000,
         parent_code: region?.parent_code,
         sigungu_code: region?.sigungu_code,
@@ -62,6 +63,7 @@ const TouristSpotList = () => {
   }
 
   const onClickButton = async () => {
+    setPage(1)
     await getTouristSpot() // 축제 가져오기를 완료한 후에 페이지 번호를 설정
     await getMaxPage()
   }
@@ -96,7 +98,11 @@ const TouristSpotList = () => {
               onClick={() => handleBoxClick(touristSpot)}
             >
               <img
-                src={touristSpot.first_image}
+                src={
+                  touristSpot.first_image !== ''
+                    ? touristSpot.first_image
+                    : default_image
+                }
                 // alt={touristSpot.title}
                 className='img-fluid'
               />
